@@ -70,13 +70,12 @@ export const trpgTools = {
 
   suggestReplies: tool({
     description:
-      "매 턴 마지막에 필수 호출. 플레이어가 고를 행동 3~4개. 현재 장면·플레이어가 아는 정보만 반영.",
+      "매 턴 마지막에 필수 호출. 플레이어가 고를 답변 3개. 현재 장면·플레이어가 아는 정보만 반영. 본문에 목록으로 쓰지 말 것.",
     inputSchema: z.object({
       replies: z
         .array(z.string())
-        .min(3)
-        .max(4)
-        .describe("짧은 행동 문장. 예: '신분증을 건넨다'"),
+        .length(3)
+        .describe("짧은 답변 문장 3개. 예: '신분증을 건넨다'"),
     }),
     execute: async ({ replies }) => ({ replies }),
   }),

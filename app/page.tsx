@@ -40,10 +40,12 @@ export default function ChatPage() {
     [messageParts],
   );
 
-  const suggestedReplies = useMemo(
-    () => extractLatestSuggestedReplies(messageParts),
-    [messageParts],
-  );
+  const suggestedReplies = useMemo(() => {
+    if (isLoading) return [];
+    const last = messages[messages.length - 1];
+    if (!last || last.role !== "assistant") return [];
+    return extractLatestSuggestedReplies(messageParts);
+  }, [messageParts, messages, isLoading]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -125,7 +127,7 @@ export default function ChatPage() {
             <p className="status">기록 중… (결재 대기)</p>
           )}
 
-          {hasSession && (
+          {hasSession && suggestedReplies.length > 0 && (
             <SuggestedReplies
               replies={suggestedReplies}
               onSelect={sendUserMessage}

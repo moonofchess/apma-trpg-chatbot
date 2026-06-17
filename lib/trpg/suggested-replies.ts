@@ -1,30 +1,62 @@
+import { stripSuggestRepliesFromText } from "./suggest-replies-text";
+
 type MessagePart = {
   type: string;
+  text?: string;
   state?: string;
+  input?: unknown;
   output?: unknown;
 };
 
-function isReplyOutput(output: unknown): output is { replies: string[] } {
+function normalizeReplies(replies: string[]): string[] {
+  return replies.map((r) => r.trim()).filter((r) => r.length > 0).slice(0, 3);
+}
+
+function isReplyPayload(value: unknown): value is { replies: string[] } {
   return (
-    typeof output === "object" &&
-    output !== null &&
-    "replies" in output &&
-    Array.isArray((output as { replies: unknown }).replies)
+    typeof value === "object" &&
+    value !== null &&
+    "replies" in value &&
+    Array.isArray((value as { replies: unknown }).replies)
   );
+}
+
+function extractFromToolPart(part: MessagePart): string[] {
+  if (part.type !== "tool-suggestReplies") return [];
+
+  if (part.state === "output-available" && isReplyPayload(part.output)) {
+    return normalizeReplies(part.output.replies);
+  }
+
+  if (
+    (part.state === "input-available" || part.state === "input-streaming") &&
+    isReplyPayload(part.input)
+  ) {
+    return normalizeReplies(part.input.replies);
+  }
+
+  return [];
+}
+
+function extractFromTextParts(parts: MessagePart[]): string[] {
+  for (let i = parts.length - 1; i >= 0; i--) {
+    const part = parts[i];
+    if (part.type !== "text" || !part.text) continue;
+
+    const { replies } = stripSuggestRepliesFromText(part.text);
+    if (replies.length > 0) return replies;
+  }
+
+  return [];
 }
 
 export function extractRepliesFromParts(parts: MessagePart[]): string[] {
   for (let i = parts.length - 1; i >= 0; i--) {
-    const part = parts[i];
-    if (
-      part.type === "tool-suggestReplies" &&
-      part.state === "output-available" &&
-      isReplyOutput(part.output)
-    ) {
-      return part.output.replies.filter((r) => r.trim().length > 0).slice(0, 4);
-    }
+    const replies = extractFromToolPart(parts[i]);
+    if (replies.length > 0) return replies;
   }
-  return [];
+
+  return extractFromTextParts(parts);
 }
 
 export function extractLatestSuggestedReplies(

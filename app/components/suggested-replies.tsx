@@ -13,7 +13,7 @@ export function SuggestedReplies({
 
   return (
     <div className="suggested-replies">
-      <p className="suggested-replies-label">행동 제안</p>
+      <p className="suggested-replies-label">추천 답변</p>
       <div className="suggested-replies-list">
         {replies.map((reply, index) => (
           <button

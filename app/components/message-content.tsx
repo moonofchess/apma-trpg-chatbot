@@ -1,4 +1,5 @@
 import type { DiceRollResult } from "@/lib/trpg/dice";
+import { stripSuggestRepliesFromText } from "@/lib/trpg/suggest-replies-text";
 
 import { FormattedText } from "./formatted-text";
 
@@ -118,7 +119,10 @@ export function MessageContent({ parts }: { parts: MessagePart[] }) {
         }
 
         if (part.type === "text" && part.text) {
-          return <FormattedText key={`text-${index}`} text={part.text} />;
+          const { cleanText } = stripSuggestRepliesFromText(part.text);
+          if (!cleanText.trim()) return null;
+
+          return <FormattedText key={`text-${index}`} text={cleanText} />;
         }
 
         if (
