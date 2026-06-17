@@ -11,7 +11,9 @@ import {
   OnboardingForm,
   type IntakeData,
 } from "./components/onboarding-form";
+import { SuggestedReplies } from "./components/suggested-replies";
 import { extractGameState } from "@/lib/trpg/employee-profile";
+import { extractLatestSuggestedReplies } from "@/lib/trpg/suggested-replies";
 
 export default function ChatPage() {
   const [input, setInput] = useState("");
@@ -24,25 +26,39 @@ export default function ChatPage() {
   const isLoading = status === "streaming" || status === "submitted";
   const hasSession = messages.length > 0;
 
-  const { profile, chapter } = useMemo(
+  const messageParts = useMemo(
     () =>
-      extractGameState(
-        messages.map((m) => m.parts as { type: string; state?: string; output?: unknown }[]),
-      ),
+      messages.map((m) => ({
+        role: m.role,
+        parts: m.parts as { type: string; state?: string; output?: unknown }[],
+      })),
     [messages],
+  );
+
+  const { profile, chapter } = useMemo(
+    () => extractGameState(messageParts.map((m) => m.parts)),
+    [messageParts],
+  );
+
+  const suggestedReplies = useMemo(
+    () => extractLatestSuggestedReplies(messageParts),
+    [messageParts],
   );
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
 
+  const sendUserMessage = (text: string) => {
+    const trimmed = text.trim();
+    if (!trimmed || isLoading) return;
+    sendMessage({ text: trimmed });
+    setInput("");
+  };
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const text = input.trim();
-    if (!text || isLoading) return;
-
-    sendMessage({ text });
-    setInput("");
+    sendUserMessage(input);
   };
 
   const handleIntakeSubmit = (data: IntakeData) => {
@@ -109,11 +125,19 @@ export default function ChatPage() {
             <p className="status">기록 중… (결재 대기)</p>
           )}
 
+          {hasSession && (
+            <SuggestedReplies
+              replies={suggestedReplies}
+              onSelect={sendUserMessage}
+              disabled={isLoading}
+            />
+          )}
+
           <form className="chat-form" onSubmit={handleSubmit}>
             <input
               value={input}
               onChange={(event) => setInput(event.target.value)}
-              placeholder="행동 입력… (예: OT에서 질문한다)"
+              placeholder="직접 입력… (예: 신분증을 건넨다)"
               disabled={isLoading || !hasSession}
             />
             <button type="submit" disabled={isLoading || !input.trim() || !hasSession}>

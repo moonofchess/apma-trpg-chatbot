@@ -67,6 +67,19 @@ export const trpgTools = {
     }),
     execute: async (clearance) => clearance,
   }),
+
+  suggestReplies: tool({
+    description:
+      "매 턴 마지막에 필수 호출. 플레이어가 고를 행동 3~4개. 현재 장면·플레이어가 아는 정보만 반영.",
+    inputSchema: z.object({
+      replies: z
+        .array(z.string())
+        .min(3)
+        .max(4)
+        .describe("짧은 행동 문장. 예: '신분증을 건넨다'"),
+    }),
+    execute: async ({ replies }) => ({ replies }),
+  }),
 };
 
 export type TrpgTools = typeof trpgTools;

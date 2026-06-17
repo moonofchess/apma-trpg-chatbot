@@ -579,6 +579,51 @@ body {
   font-style: italic;
 }
 
+.suggested-replies {
+  flex-shrink: 0;
+  padding: 0.65rem 1.25rem 0;
+  border-top: 1px solid #e8ecf0;
+  background: #fafbfc;
+}
+
+.suggested-replies-label {
+  font-size: 0.7rem;
+  color: #6b7a8d;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.5rem;
+}
+
+.suggested-replies-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-height: 9rem;
+  overflow-y: auto;
+}
+
+.suggested-reply-btn {
+  text-align: left;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #c0c8d4;
+  border-radius: 0.35rem;
+  background: #fff;
+  color: #1a3a5c;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.suggested-reply-btn:hover:not(:disabled) {
+  background: #e8f0fa;
+  border-color: #1a3a5c;
+}
+
+.suggested-reply-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* ── 푸터 ── */
 .site-footer {
   flex-shrink: 0;

@@ -16,6 +16,7 @@ const HIDDEN_TOOLS = new Set([
   "tool-updateClearance",
   "tool-issueForm",
   "tool-stampApproval",
+  "tool-suggestReplies",
 ]);
 
 function isDiceOutput(output: unknown): output is DiceRollResult {
