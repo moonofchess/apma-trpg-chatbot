@@ -6,12 +6,16 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import { EmployeeCard } from "./components/employee-card";
 import { MessageContent } from "./components/message-content";
+import {
+  buildIntakeMessage,
+  OnboardingForm,
+  type IntakeData,
+} from "./components/onboarding-form";
 import { extractGameState } from "@/lib/trpg/employee-profile";
-
-const START_MESSAGE = "출근합니다.";
 
 export default function ChatPage() {
   const [input, setInput] = useState("");
+  const [intake, setIntake] = useState<IntakeData | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
@@ -41,9 +45,10 @@ export default function ChatPage() {
     setInput("");
   };
 
-  const handleStart = () => {
+  const handleIntakeSubmit = (data: IntakeData) => {
     if (isLoading) return;
-    sendMessage({ text: START_MESSAGE });
+    setIntake(data);
+    sendMessage({ text: buildIntakeMessage(data) });
   };
 
   return (
@@ -64,6 +69,7 @@ export default function ChatPage() {
           profile={profile}
           chapter={chapter}
           hasSession={hasSession}
+          intake={intake}
         />
 
         <section className="work-panel">
@@ -80,22 +86,7 @@ export default function ChatPage() {
 
           <div className="messages">
             {messages.length === 0 ? (
-              <div className="empty-state">
-                <p className="empty-badge">입사 D-Day</p>
-                <p className="empty-title">전자결재 알림이 울린다</p>
-                <p>
-                  온보딩 안내 메일 제목에 「유클리드」가 박혀 있다.
-                  복도 끝 프린터가 돌아가는 소리. 아직 이름표도 없다.
-                </p>
-                <button
-                  type="button"
-                  className="start-button"
-                  onClick={handleStart}
-                  disabled={isLoading}
-                >
-                  출근하기
-                </button>
-              </div>
+              <OnboardingForm onSubmit={handleIntakeSubmit} disabled={isLoading} />
             ) : (
               <>
                 {messages.map((message) => (
@@ -122,10 +113,10 @@ export default function ChatPage() {
             <input
               value={input}
               onChange={(event) => setInput(event.target.value)}
-              placeholder="행동 입력… (예: 김 과장에게 보고서 제출을 미룬다)"
-              disabled={isLoading}
+              placeholder="행동 입력… (예: OT에서 질문한다)"
+              disabled={isLoading || !hasSession}
             />
-            <button type="submit" disabled={isLoading || !input.trim()}>
+            <button type="submit" disabled={isLoading || !input.trim() || !hasSession}>
               기록
             </button>
           </form>

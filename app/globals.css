@@ -450,6 +450,57 @@ body {
   font-size: 0.85rem;
   color: #6b7a8d;
   margin-top: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.intake-form {
+  margin: auto;
+  padding: 1.5rem 1rem;
+  max-width: 360px;
+  width: 100%;
+  text-align: left;
+}
+
+.intake-form .empty-badge,
+.intake-form .empty-title {
+  text-align: center;
+}
+
+.intake-form .empty-hint {
+  text-align: center;
+}
+
+.intake-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.85rem;
+  font-size: 0.85rem;
+}
+
+.intake-field span {
+  color: #4a5568;
+  font-weight: 600;
+}
+
+.intake-field input,
+.intake-field select {
+  padding: 0.65rem 0.75rem;
+  border: 1px solid #b0b8c4;
+  border-radius: 0.3rem;
+  font-size: 0.9rem;
+  background: #fff;
+  color: #1a2332;
+}
+
+.intake-field input:focus,
+.intake-field select:focus {
+  outline: 2px solid #1a3a5c;
+}
+
+.intake-form .start-button {
+  width: 100%;
+  margin-top: 0.5rem;
 }
 
 .start-button {

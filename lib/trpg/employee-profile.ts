@@ -1,5 +1,6 @@
 export type EmployeeProfile = {
   name: string;
+  age?: string;
   department: string;
   rank: string;
   employeeId: string;
@@ -63,6 +64,7 @@ export function extractGameState(partsList: MessagePart[][]): {
         profile = {
           ...profile,
           name: part.output.name,
+          age: (part.output as EmployeeProfile).age ?? profile.age,
           department: part.output.department,
           rank: part.output.rank,
           employeeId: part.output.employeeId,

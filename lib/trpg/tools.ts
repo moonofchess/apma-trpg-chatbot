@@ -20,6 +20,7 @@ export const trpgTools = {
     description: "사원증 정보 확정·변경 시.",
     inputSchema: z.object({
       name: z.string(),
+      age: z.string().optional().describe("나이"),
       department: z.string(),
       rank: z.string(),
       employeeId: z.string(),
