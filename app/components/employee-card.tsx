@@ -24,11 +24,7 @@ export function EmployeeCard({
       <div className="card-photo">{isAssigned ? "🪪" : "👤"}</div>
       <div className="card-info">
         <p className="card-label">사원증</p>
-        {chapter && (
-          <p className="card-chapter">
-            제{chapter.chapter}화 · {chapter.title}
-          </p>
-        )}
+        {chapter && <p className="card-chapter">{chapter.title}</p>}
         <dl className="card-details">
           <div>
             <dt>이름</dt>
@@ -36,16 +32,22 @@ export function EmployeeCard({
           </div>
           <div>
             <dt>부서</dt>
-            <dd>{isAssigned ? profile.department : profile.department}</dd>
+            <dd>{profile.department}</dd>
           </div>
           <div>
             <dt>직급</dt>
-            <dd>{isAssigned ? profile.rank : profile.rank}</dd>
+            <dd>{profile.rank}</dd>
           </div>
           <div>
             <dt>사번</dt>
-            <dd>{isAssigned ? profile.employeeId : profile.employeeId}</dd>
+            <dd>{profile.employeeId}</dd>
           </div>
+          {profile.clearance && (
+            <div>
+              <dt>결재권</dt>
+              <dd>{profile.clearance}</dd>
+            </div>
+          )}
         </dl>
       </div>
     </aside>

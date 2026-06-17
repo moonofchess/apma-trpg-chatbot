@@ -1,5 +1,7 @@
 import type { DiceRollResult } from "@/lib/trpg/dice";
 
+import { FormattedText } from "./formatted-text";
+
 type MessagePart = {
   type: string;
   text?: string;
@@ -11,6 +13,9 @@ type MessagePart = {
 const HIDDEN_TOOLS = new Set([
   "tool-updateEmployeeProfile",
   "tool-setChapter",
+  "tool-updateClearance",
+  "tool-issueForm",
+  "tool-stampApproval",
 ]);
 
 function isDiceOutput(output: unknown): output is DiceRollResult {
@@ -20,6 +25,28 @@ function isDiceOutput(output: unknown): output is DiceRollResult {
     "expression" in output &&
     "total" in output &&
     "rolls" in output
+  );
+}
+
+function isFormOutput(
+  output: unknown,
+): output is { formType: string; target: string; summary: string; status?: string } {
+  return (
+    typeof output === "object" &&
+    output !== null &&
+    "formType" in output &&
+    "summary" in output
+  );
+}
+
+function isStampOutput(
+  output: unknown,
+): output is { formType: string; approver: string; decision: string; note?: string } {
+  return (
+    typeof output === "object" &&
+    output !== null &&
+    "decision" in output &&
+    "approver" in output
   );
 }
 
@@ -47,6 +74,40 @@ function DiceBlock({ result }: { result: DiceRollResult }) {
   );
 }
 
+function FormBlock({
+  form,
+}: {
+  form: { formType: string; target: string; summary: string; status?: string };
+}) {
+  return (
+    <div className="form-card">
+      <div className="form-card-header">
+        <span className="form-card-label">내부 양식</span>
+        {form.status && <span className="form-card-status">{form.status}</span>}
+      </div>
+      <p className="form-card-type">{form.formType}</p>
+      <p className="form-card-summary">{form.summary}</p>
+      <p className="form-card-target">대상: {form.target}</p>
+    </div>
+  );
+}
+
+function StampBlock({
+  stamp,
+}: {
+  stamp: { formType: string; approver: string; decision: string; note?: string };
+}) {
+  return (
+    <div className={`stamp-card stamp-${stamp.decision}`}>
+      <span className="stamp-decision">{stamp.decision}</span>
+      <span className="stamp-detail">
+        {stamp.approver} · {stamp.formType}
+      </span>
+      {stamp.note && <span className="stamp-note">{stamp.note}</span>}
+    </div>
+  );
+}
+
 export function MessageContent({ parts }: { parts: MessagePart[] }) {
   return (
     <>
@@ -56,11 +117,7 @@ export function MessageContent({ parts }: { parts: MessagePart[] }) {
         }
 
         if (part.type === "text" && part.text) {
-          return (
-            <p key={`text-${index}`} className="message-paragraph">
-              {part.text}
-            </p>
-          );
+          return <FormattedText key={`text-${index}`} text={part.text} />;
         }
 
         if (
@@ -69,6 +126,22 @@ export function MessageContent({ parts }: { parts: MessagePart[] }) {
           isDiceOutput(part.output)
         ) {
           return <DiceBlock key={`dice-${index}`} result={part.output} />;
+        }
+
+        if (
+          part.type === "tool-issueForm" &&
+          part.state === "output-available" &&
+          isFormOutput(part.output)
+        ) {
+          return <FormBlock key={`form-${index}`} form={part.output} />;
+        }
+
+        if (
+          part.type === "tool-stampApproval" &&
+          part.state === "output-available" &&
+          isStampOutput(part.output)
+        ) {
+          return <StampBlock key={`stamp-${index}`} stamp={part.output} />;
         }
 
         return null;

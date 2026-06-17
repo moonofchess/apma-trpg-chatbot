@@ -3,10 +3,10 @@ export type EmployeeProfile = {
   department: string;
   rank: string;
   employeeId: string;
+  clearance?: string;
 };
 
 export type ChapterInfo = {
-  chapter: number;
   title: string;
   subtitle?: string;
 };
@@ -37,11 +37,14 @@ function isProfile(output: unknown): output is EmployeeProfile {
 }
 
 function isChapter(output: unknown): output is ChapterInfo {
+  return typeof output === "object" && output !== null && "title" in output;
+}
+
+function isClearance(
+  output: unknown,
+): output is { level: string; reason: string } {
   return (
-    typeof output === "object" &&
-    output !== null &&
-    "chapter" in output &&
-    "title" in output
+    typeof output === "object" && output !== null && "level" in output
   );
 }
 
@@ -49,7 +52,7 @@ export function extractGameState(partsList: MessagePart[][]): {
   profile: EmployeeProfile;
   chapter: ChapterInfo | null;
 } {
-  let profile = { ...DEFAULT_PROFILE };
+  let profile: EmployeeProfile = { ...DEFAULT_PROFILE };
   let chapter: ChapterInfo | null = null;
 
   for (const parts of partsList) {
@@ -58,25 +61,26 @@ export function extractGameState(partsList: MessagePart[][]): {
 
       if (part.type === "tool-updateEmployeeProfile" && isProfile(part.output)) {
         profile = {
+          ...profile,
           name: part.output.name,
           department: part.output.department,
           rank: part.output.rank,
           employeeId: part.output.employeeId,
         };
         const extended = part.output as EmployeeProfile & {
-          chapter?: number;
           chapterTitle?: string;
         };
-        if (extended.chapter && extended.chapterTitle) {
-          chapter = {
-            chapter: extended.chapter,
-            title: extended.chapterTitle,
-          };
+        if (extended.chapterTitle) {
+          chapter = { title: extended.chapterTitle };
         }
       }
 
       if (part.type === "tool-setChapter" && isChapter(part.output)) {
         chapter = part.output;
+      }
+
+      if (part.type === "tool-updateClearance" && isClearance(part.output)) {
+        profile = { ...profile, clearance: part.output.level };
       }
     }
   }

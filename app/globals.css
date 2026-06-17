@@ -257,6 +257,101 @@ body {
   margin-bottom: 0;
 }
 
+.text-dialogue {
+  color: #1a3a5c;
+  font-weight: 500;
+}
+
+.text-thought {
+  color: #5a4a6a;
+  font-style: italic;
+}
+
+.text-emphasis {
+  font-style: italic;
+  color: #8b3030;
+  font-weight: 600;
+}
+
+.form-card {
+  margin: 0.65rem 0;
+  padding: 0.75rem 1rem;
+  background: #f8fafc;
+  border: 1px solid #c0c8d4;
+  border-left: 3px solid #1a3a5c;
+  border-radius: 0.25rem;
+  font-size: 0.85rem;
+}
+
+.form-card-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.35rem;
+}
+
+.form-card-label {
+  font-size: 0.65rem;
+  color: #6b7a8d;
+  letter-spacing: 0.08em;
+}
+
+.form-card-status {
+  font-size: 0.7rem;
+  color: #a07830;
+  font-weight: 700;
+}
+
+.form-card-type {
+  font-weight: 700;
+  color: #1a2332;
+}
+
+.form-card-summary {
+  margin-top: 0.25rem;
+  color: #4a5568;
+}
+
+.form-card-target {
+  margin-top: 0.2rem;
+  font-size: 0.75rem;
+  color: #6b7a8d;
+}
+
+.stamp-card {
+  margin: 0.5rem 0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.stamp-card.stamp-승인 {
+  background: #edf7ed;
+  border: 1px solid #6b9e6b;
+}
+
+.stamp-card.stamp-반려 {
+  background: #fdf0f0;
+  border: 1px solid #c44;
+}
+
+.stamp-card.stamp-보류 {
+  background: #fff8f0;
+  border: 1px solid #c49a3c;
+}
+
+.stamp-decision {
+  font-weight: 700;
+}
+
+.stamp-detail,
+.stamp-note {
+  color: #6b7a8d;
+  font-size: 0.75rem;
+}
+
 /* ── 업무 판정서 ── */
 .dice-roll {
   position: relative;

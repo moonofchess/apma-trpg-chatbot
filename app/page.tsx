@@ -8,8 +8,7 @@ import { EmployeeCard } from "./components/employee-card";
 import { MessageContent } from "./components/message-content";
 import { extractGameState } from "@/lib/trpg/employee-profile";
 
-const START_MESSAGE =
-  "입사 첫날. 사건으로 시작해 주세요. 제1화부터 진행합니다.";
+const START_MESSAGE = "출근합니다.";
 
 export default function ChatPage() {
   const [input, setInput] = useState("");
@@ -72,7 +71,9 @@ export default function ChatPage() {
             <h1>근무일지 시스템</h1>
             <p>
               {chapter
-                ? `제${chapter.chapter}화 · ${chapter.title}`
+                ? chapter.subtitle
+                  ? `${chapter.title} — ${chapter.subtitle}`
+                  : chapter.title
                 : "2026년 · 내부망 전용"}
             </p>
           </header>

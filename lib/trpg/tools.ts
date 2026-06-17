@@ -5,46 +5,66 @@ import { rollDice } from "./dice";
 
 export const trpgTools = {
   rollDice: tool({
-    description:
-      "업무·현장 판정용 주사위. 보고서, 설득, 관찰, 대응, 스트레스 등. 반드시 서버 난수 사용.",
+    description: "판정용 주사위. 서버 난수.",
     inputSchema: z.object({
-      count: z.number().int().min(1).max(20).describe("주사위 개수"),
-      sides: z.number().int().min(2).max(100).describe("면 수 (d20이면 20)"),
-      modifier: z
-        .number()
-        .int()
-        .min(-20)
-        .max(20)
-        .default(0)
-        .describe("보정치"),
-      reason: z.string().describe("판정 항목"),
+      count: z.number().int().min(1).max(20),
+      sides: z.number().int().min(2).max(100),
+      modifier: z.number().int().min(-20).max(20).default(0),
+      reason: z.string(),
     }),
     execute: async ({ count, sides, modifier, reason }) =>
       rollDice(count, sides, modifier, reason),
   }),
 
   updateEmployeeProfile: tool({
-    description:
-      "플레이어 사원증 정보 확정·변경 시 호출. 캐릭터 생성 완료, 부서 배치, 승진·이동 시 필수.",
+    description: "사원증 정보 확정·변경 시.",
     inputSchema: z.object({
-      name: z.string().describe("플레이어 이름"),
-      department: z.string().describe("소속 부서"),
-      rank: z.string().describe("직급 (예: 주임, 대리, 7급)"),
-      employeeId: z.string().describe("사번 (예: APMA-2026-0147)"),
-      chapter: z.number().int().optional().describe("현재 챕터 번호"),
-      chapterTitle: z.string().optional().describe("현재 챕터 제목"),
+      name: z.string(),
+      department: z.string(),
+      rank: z.string(),
+      employeeId: z.string(),
+      chapterTitle: z.string().optional().describe("현재 근무일지 제목(사건명만)"),
     }),
     execute: async (profile) => profile,
   }),
 
   setChapter: tool({
-    description: "새 챕터(화) 시작 시 호출. 챕터 번호와 제목을 UI에 반영.",
+    description: "서사 구간 전환. title은 사건명만(메타 번호 금지).",
     inputSchema: z.object({
-      chapter: z.number().int().min(1).describe("챕터 번호"),
-      title: z.string().describe("챕터 제목 (예: 제1화 · 입사 D-Day)"),
-      subtitle: z.string().optional().describe("부제"),
+      title: z.string().describe('예: "입사 D-Day", "첫 야근"'),
+      subtitle: z.string().optional(),
     }),
     execute: async (chapter) => chapter,
+  }),
+
+  issueForm: tool({
+    description: "양식 발급. 가결재 상태로 생성.",
+    inputSchema: z.object({
+      formType: z.string().describe("양식 종류"),
+      target: z.string().describe("대상"),
+      summary: z.string().describe("한 줄 요약"),
+    }),
+    execute: async (form) => ({ ...form, status: "가결재" as const }),
+  }),
+
+  stampApproval: tool({
+    description: "결재 또는 반려. 괴이·규칙에 효력 발생.",
+    inputSchema: z.object({
+      formType: z.string(),
+      approver: z.string(),
+      decision: z.enum(["승인", "반려", "보류"]),
+      note: z.string().optional(),
+    }),
+    execute: async (stamp) => stamp,
+  }),
+
+  updateClearance: tool({
+    description: "플레이어 결재 권한 등급 변동.",
+    inputSchema: z.object({
+      level: z.string().describe("예: 가결재-only, 본결재-안전, 본결재-유클리드"),
+      reason: z.string(),
+    }),
+    execute: async (clearance) => clearance,
   }),
 };
 
