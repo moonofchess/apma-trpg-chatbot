@@ -2,21 +2,36 @@
 
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
+import { EmployeeCard } from "./components/employee-card";
 import { MessageContent } from "./components/message-content";
+import { extractGameState } from "@/lib/trpg/employee-profile";
 
 const START_MESSAGE =
-  "입사 첫날입니다. 괴이현상관리국 말단 직원으로서 TRPG를 시작해 주세요. 캐릭터 생성부터 부탁합니다.";
+  "입사 첫날. 사건으로 시작해 주세요. 제1화부터 진행합니다.";
 
 export default function ChatPage() {
   const [input, setInput] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
   });
 
   const isLoading = status === "streaming" || status === "submitted";
   const hasSession = messages.length > 0;
+
+  const { profile, chapter } = useMemo(
+    () =>
+      extractGameState(
+        messages.map((m) => m.parts as { type: string; state?: string; output?: unknown }[]),
+      ),
+    [messages],
+  );
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isLoading]);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -46,46 +61,30 @@ export default function ChatPage() {
       </header>
 
       <main className="chat-container">
-        <aside className="employee-card">
-          <div className="card-photo">👤</div>
-          <div className="card-info">
-            <p className="card-label">사원증</p>
-            <p className="card-name">{hasSession ? "배정 대기 중" : "입사 예정"}</p>
-            <dl className="card-details">
-              <div>
-                <dt>부서</dt>
-                <dd>{hasSession ? "—" : "미배정"}</dd>
-              </div>
-              <div>
-                <dt>직급</dt>
-                <dd>{hasSession ? "—" : "말단"}</dd>
-              </div>
-              <div>
-                <dt>사번</dt>
-                <dd>{hasSession ? "—" : "APMA-2026-___"}</dd>
-              </div>
-            </dl>
-          </div>
-        </aside>
+        <EmployeeCard
+          profile={profile}
+          chapter={chapter}
+          hasSession={hasSession}
+        />
 
         <section className="work-panel">
           <header className="panel-header">
             <h1>근무일지 시스템</h1>
-            <p>2026년 · 내부망 전용 · 기록은 영구 보존됩니다</p>
+            <p>
+              {chapter
+                ? `제${chapter.chapter}화 · ${chapter.title}`
+                : "2026년 · 내부망 전용"}
+            </p>
           </header>
 
           <div className="messages">
             {messages.length === 0 ? (
               <div className="empty-state">
                 <p className="empty-badge">입사 D-Day</p>
-                <p className="empty-title">괴이현상관리국, 첫 출근</p>
+                <p className="empty-title">전자결재 알림이 울린다</p>
                 <p>
-                  겉보기엔 평범한 공공기관 사무실입니다. 하지만 복사기 옆
-                  게시판에는 「유클리드급 격리 프로토콜 개정」이 붙어 있고,
-                  점심 메뉴 고민 대신 야근 조 배정표가 올라옵니다.
-                </p>
-                <p className="empty-hint">
-                  당신은 말단 직원. 보고서, 현장 출동, 상사 눈치가 일상입니다.
+                  온보딩 안내 메일 제목에 「유클리드」가 박혀 있다.
+                  복도 끝 프린터가 돌아가는 소리. 아직 이름표도 없다.
                 </p>
                 <button
                   type="button"
@@ -97,17 +96,20 @@ export default function ChatPage() {
                 </button>
               </div>
             ) : (
-              messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`message ${message.role === "user" ? "user" : "assistant"}`}
-                >
-                  <span className="message-label">
-                    {message.role === "user" ? "업무 기록" : "근무일지"}
-                  </span>
-                  <MessageContent parts={message.parts} />
-                </div>
-              ))
+              <>
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`message ${message.role === "user" ? "user" : "assistant"}`}
+                  >
+                    <span className="message-label">
+                      {message.role === "user" ? "업무 기록" : "근무일지"}
+                    </span>
+                    <MessageContent parts={message.parts} />
+                  </div>
+                ))}
+                <div ref={messagesEndRef} />
+              </>
             )}
           </div>
 

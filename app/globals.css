@@ -4,17 +4,24 @@
   padding: 0;
 }
 
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
   font-family: "Malgun Gothic", "Apple SD Gothic Neo", system-ui, sans-serif;
   background: #d8dce3;
   color: #1a2332;
-  min-height: 100vh;
 }
 
 .app-shell {
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 /* ── 상단 기관 바 ── */
@@ -72,13 +79,15 @@ body {
 /* ── 메인 레이아웃 ── */
 .chat-container {
   flex: 1;
+  min-height: 0;
   max-width: 900px;
   width: 100%;
   margin: 0 auto;
-  padding: 1.25rem 1rem 0;
+  padding: 1rem 1rem 0.5rem;
   display: grid;
   grid-template-columns: 200px 1fr;
   gap: 1rem;
+  overflow: hidden;
 }
 
 @media (max-width: 640px) {
@@ -108,7 +117,9 @@ body {
   border: 1px solid #b0b8c4;
   border-radius: 0.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  height: fit-content;
+  align-self: start;
+  max-height: 100%;
+  overflow-y: auto;
 }
 
 .card-photo {
@@ -129,15 +140,16 @@ body {
   color: #6b7a8d;
   text-align: center;
   letter-spacing: 0.1em;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.35rem;
 }
 
-.card-name {
-  font-size: 0.9rem;
-  font-weight: 700;
+.card-chapter {
+  font-size: 0.7rem;
+  color: #c41e3a;
   text-align: center;
-  color: #1a3a5c;
-  margin-bottom: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
 }
 
 .card-details {
@@ -169,11 +181,12 @@ body {
   border: 1px solid #b0b8c4;
   border-radius: 0.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  min-height: 70vh;
+  min-height: 0;
   overflow: hidden;
 }
 
 .panel-header {
+  flex-shrink: 0;
   padding: 1rem 1.25rem;
   background: #f0f3f7;
   border-bottom: 1px solid #d0d8e0;
@@ -193,11 +206,14 @@ body {
 
 .messages {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 1rem 1.25rem;
+  overscroll-behavior: contain;
 }
 
 .message {
@@ -366,6 +382,7 @@ body {
 
 /* ── 입력 ── */
 .chat-form {
+  flex-shrink: 0;
   display: flex;
   gap: 0.5rem;
   padding: 0.85rem 1.25rem;
@@ -409,6 +426,7 @@ body {
 }
 
 .status {
+  flex-shrink: 0;
   font-size: 0.8rem;
   color: #6b7a8d;
   padding: 0 1.25rem 0.5rem;
@@ -417,6 +435,7 @@ body {
 
 /* ── 푸터 ── */
 .site-footer {
+  flex-shrink: 0;
   text-align: center;
   padding: 0.75rem;
   font-size: 0.7rem;

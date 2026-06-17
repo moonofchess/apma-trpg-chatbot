@@ -8,6 +8,11 @@ type MessagePart = {
   output?: unknown;
 };
 
+const HIDDEN_TOOLS = new Set([
+  "tool-updateEmployeeProfile",
+  "tool-setChapter",
+]);
+
 function isDiceOutput(output: unknown): output is DiceRollResult {
   return (
     typeof output === "object" &&
@@ -46,6 +51,10 @@ export function MessageContent({ parts }: { parts: MessagePart[] }) {
   return (
     <>
       {parts.map((part, index) => {
+        if (HIDDEN_TOOLS.has(part.type)) {
+          return null;
+        }
+
         if (part.type === "text" && part.text) {
           return (
             <p key={`text-${index}`} className="message-paragraph">
