@@ -15,7 +15,7 @@ export async function POST(req: Request) {
   const { messages }: { messages: UIMessage[] } = await req.json();
 
   const result = streamText({
-    model: openai("gpt-4o-mini"),
+    model: openai("gpt-4o"),
     system: TRPG_SYSTEM_PROMPT,
     messages: await convertToModelMessages(messages),
     tools: trpgTools,
