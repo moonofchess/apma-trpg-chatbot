@@ -917,6 +917,382 @@ body {
   cursor: not-allowed;
 }
 
+/* ── 호러 모드 전환 효과 ── */
+.app-shell,
+.top-bar,
+.org-logo,
+.classified-stamp,
+.employee-card,
+.card-photo,
+.card-label,
+.card-chapter,
+.card-details div,
+.card-details dt,
+.card-details dd,
+.work-panel,
+.panel-header,
+.panel-action-button,
+.save-dialog,
+.save-dialog-header,
+.save-dialog-close,
+.save-dialog-slot,
+.save-dialog-slot-actions button,
+.message,
+.message-label,
+.text-dialogue,
+.text-thought,
+.text-emphasis,
+.status,
+.loading-spinner,
+.suggested-replies,
+.suggested-reply-btn,
+.chat-form,
+.chat-form input,
+.chat-form button,
+.dice-roll,
+.dice-stamp,
+.dice-reason,
+.dice-expression,
+.dice-total,
+.dice-image,
+.dice-pip,
+.dice-prompt-title,
+.dice-roll-button,
+.form-card,
+.form-card-label,
+.form-card-type,
+.form-card-summary,
+.stamp-card {
+  transition:
+    background-color 0.7s ease,
+    border-color 0.6s ease,
+    color 0.4s ease,
+    box-shadow 0.7s ease;
+}
+
+/* ── 호러 모드 진입 애니메이션 ── */
+@keyframes horror-flicker {
+  0%   { opacity: 1; }
+  8%   { opacity: 0.6; }
+  12%  { opacity: 1; }
+  20%  { opacity: 0.75; }
+  25%  { opacity: 1; }
+}
+
+.horror-mode {
+  animation: horror-flicker 1s ease forwards;
+}
+
+/* ── 호러 모드 테마 ── */
+.horror-mode {
+  background-color: #0c0c0e;
+  color: #e0d4d4;
+}
+
+.horror-mode .top-bar {
+  background: linear-gradient(180deg, #0d0d10 0%, #080808 100%);
+  border-bottom-color: #7a0000;
+}
+
+.horror-mode .org-logo {
+  background: #180808;
+  color: #cc2222;
+}
+
+.horror-mode .classified-stamp {
+  border-color: #cc2222;
+  color: #ff3333;
+}
+
+.horror-mode .employee-card {
+  background: #111116;
+  border-color: #2a1010;
+  box-shadow: 0 2px 10px rgba(139, 0, 0, 0.2);
+}
+
+.horror-mode .card-photo {
+  background: #1a0808;
+  border-color: #3a1010;
+}
+
+.horror-mode .card-label {
+  color: #7a5050;
+}
+
+.horror-mode .card-chapter {
+  color: #ff4444;
+}
+
+.horror-mode .card-details div {
+  border-bottom-color: #2a1414;
+}
+
+.horror-mode .card-details dt {
+  color: #7a5050;
+}
+
+.horror-mode .card-details dd {
+  color: #e0d4d4;
+}
+
+.horror-mode .work-panel {
+  background: #111116;
+  border-color: #2a1010;
+  box-shadow: 0 2px 10px rgba(139, 0, 0, 0.12);
+}
+
+.horror-mode .panel-header {
+  background: #0d0d12;
+  border-bottom-color: #2a1010;
+}
+
+.horror-mode .panel-header h1 {
+  color: #e0d4d4;
+}
+
+.horror-mode .panel-header p {
+  color: #7a5050;
+}
+
+.horror-mode .panel-action-button {
+  background: #1a1010;
+  border-color: #3a1010;
+  color: #cc9090;
+}
+
+.horror-mode .panel-action-button:hover:not(:disabled) {
+  background: #221010;
+}
+
+.horror-mode .save-dialog-backdrop {
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.horror-mode .save-dialog {
+  background: #111116;
+  border-color: #2a1010;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.7);
+}
+
+.horror-mode .save-dialog-header {
+  background: #0d0d12;
+  border-bottom-color: #2a1010;
+}
+
+.horror-mode .save-dialog-header h2 {
+  color: #e0d4d4;
+}
+
+.horror-mode .save-dialog-header p {
+  color: #7a5050;
+}
+
+.horror-mode .save-dialog-close {
+  background: #1a1010;
+  border-color: #3a1010;
+  color: #cc9090;
+}
+
+.horror-mode .save-dialog-slot {
+  background: #0d0d12;
+  border-color: #2a1010;
+}
+
+.horror-mode .save-dialog-slot-info strong {
+  color: #e0d4d4;
+}
+
+.horror-mode .save-dialog-slot-info span {
+  color: #e0d4d4;
+}
+
+.horror-mode .save-dialog-slot-info small {
+  color: #7a5050;
+}
+
+.horror-mode .save-dialog-slot-actions button {
+  background: #1a1010;
+  border-color: #3a1010;
+  color: #cc9090;
+}
+
+.horror-mode .save-dialog-close:hover,
+.horror-mode .save-dialog-slot-actions button:hover:not(:disabled),
+.horror-mode .panel-action-button:hover:not(:disabled) {
+  background: #221010;
+}
+
+.horror-mode .message.user {
+  background: #0e0a0a;
+  border-color: #2a1414;
+  border-right-color: #4a1a1a;
+  color: #c8b8b8;
+}
+
+.horror-mode .message.assistant {
+  background: #120808;
+  border-color: #2a1010;
+  border-left-color: #8b0000;
+  color: #e0d4d4;
+}
+
+.horror-mode .message-label {
+  color: #7a5050;
+}
+
+.horror-mode .text-dialogue {
+  color: #ff7070;
+}
+
+.horror-mode .text-thought {
+  color: #9a7070;
+}
+
+.horror-mode .text-emphasis {
+  color: #ff5050;
+}
+
+.horror-mode .status {
+  color: #7a5050;
+}
+
+.horror-mode .loading-spinner {
+  border-color: #3a1a1a;
+  border-top-color: #8b0000;
+}
+
+.horror-mode .suggested-replies {
+  background: #0d0d12;
+  border-top-color: #2a1010;
+  border-bottom-color: #2a1010;
+}
+
+.horror-mode .suggested-replies-label {
+  color: #7a5050;
+}
+
+.horror-mode .suggested-reply-btn {
+  background: #1a1010;
+  border-color: #3a1010;
+  color: #cc9090;
+}
+
+.horror-mode .suggested-reply-btn:hover:not(:disabled) {
+  background: #221010;
+  border-color: #8b0000;
+  color: #e0c0c0;
+}
+
+.horror-mode .chat-form {
+  background: #0d0d12;
+  border-top-color: #2a1010;
+}
+
+.horror-mode .chat-form input {
+  background: #1a1010;
+  border-color: #3a1010;
+  color: #e0d4d4;
+}
+
+.horror-mode .chat-form input::placeholder {
+  color: #7a5050;
+}
+
+.horror-mode .chat-form input:focus {
+  outline-color: #8b0000;
+}
+
+.horror-mode .chat-form button {
+  background: #8b0000;
+}
+
+.horror-mode .chat-form button:hover:not(:disabled) {
+  background: #aa0000;
+}
+
+.horror-mode .dice-roll {
+  background: #100808;
+  border-color: #3a1a0a;
+  border-left-color: #8b0000;
+}
+
+.horror-mode .dice-stamp {
+  border-color: #8b0000;
+  color: #cc3333;
+}
+
+.horror-mode .dice-reason {
+  color: #e0d4d4;
+}
+
+.horror-mode .dice-expression {
+  color: #9a7060;
+}
+
+.horror-mode .dice-total {
+  color: #e0d4d4;
+}
+
+.horror-mode .dice-image {
+  border-color: #8b0000;
+  background: linear-gradient(145deg, #1a0808 0%, #120404 100%);
+  box-shadow: 0 0.35rem 0.8rem rgba(139, 0, 0, 0.3);
+}
+
+.horror-mode .dice-pip {
+  background: #cc3333;
+}
+
+.horror-mode .dice-prompt-title {
+  color: #e0d4d4;
+}
+
+.horror-mode .dice-roll-button {
+  background: #8b0000;
+  border-color: #aa2222;
+}
+
+.horror-mode .dice-roll-button:hover:not(:disabled) {
+  background: #aa0000;
+}
+
+.horror-mode .form-card {
+  background: #100808;
+  border-color: #2a1010;
+  border-left-color: #8b0000;
+}
+
+.horror-mode .form-card-label {
+  color: #7a5050;
+}
+
+.horror-mode .form-card-type {
+  color: #e0d4d4;
+}
+
+.horror-mode .form-card-summary {
+  color: #9a7070;
+}
+
+.horror-mode .form-card-target {
+  color: #7a5050;
+}
+
+.horror-mode .stamp-card.stamp-승인 {
+  background: #081208;
+  border-color: #2a5a2a;
+}
+
+.horror-mode .stamp-card.stamp-반려 {
+  background: #120808;
+  border-color: #8b0000;
+}
+
+.horror-mode .stamp-card.stamp-보류 {
+  background: #100a04;
+  border-color: #5a3a0a;
+}
+
 /* ── 푸터 ── */
 .site-footer {
   flex-shrink: 0;
@@ -926,6 +1302,12 @@ body {
   color: #6b7a8d;
   background: #c8cdd6;
   border-top: 1px solid #b0b8c4;
+}
+
+.horror-mode .site-footer {
+  background: #080808;
+  border-top-color: #2a1010;
+  color: #7a5050;
 }
 
 @media (max-width: 640px) {

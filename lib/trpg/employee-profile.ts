@@ -49,12 +49,18 @@ function isClearance(
   );
 }
 
+function isHorrorMode(output: unknown): output is { active: boolean } {
+  return typeof output === "object" && output !== null && "active" in output;
+}
+
 export function extractGameState(partsList: MessagePart[][]): {
   profile: EmployeeProfile;
   chapter: ChapterInfo | null;
+  horrorMode: boolean;
 } {
   let profile: EmployeeProfile = { ...DEFAULT_PROFILE };
   let chapter: ChapterInfo | null = null;
+  let horrorMode = false;
 
   for (const parts of partsList) {
     for (const part of parts) {
@@ -64,16 +70,14 @@ export function extractGameState(partsList: MessagePart[][]): {
         profile = {
           ...profile,
           name: part.output.name,
-          age: (part.output as EmployeeProfile).age ?? profile.age,
+          age: part.output.age ?? profile.age,
           department: part.output.department,
           rank: part.output.rank,
           employeeId: part.output.employeeId,
         };
-        const extended = part.output as EmployeeProfile & {
-          chapterTitle?: string;
-        };
-        if (extended.chapterTitle) {
-          chapter = { title: extended.chapterTitle };
+        const chapterTitle = (part.output as EmployeeProfile & { chapterTitle?: string }).chapterTitle;
+        if (chapterTitle) {
+          chapter = { title: chapterTitle };
         }
       }
 
@@ -84,8 +88,12 @@ export function extractGameState(partsList: MessagePart[][]): {
       if (part.type === "tool-updateClearance" && isClearance(part.output)) {
         profile = { ...profile, clearance: part.output.level };
       }
+
+      if (part.type === "tool-setHorrorMode" && isHorrorMode(part.output)) {
+        horrorMode = part.output.active;
+      }
     }
   }
 
-  return { profile, chapter };
+  return { profile, chapter, horrorMode };
 }

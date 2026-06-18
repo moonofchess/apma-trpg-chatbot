@@ -200,7 +200,7 @@ export function buildFallbackSuggestedReplies(
     [
       [
         "절차대로 필요한 서류를 확인한다",
-        "눈앞의 이상한 점을 NPC에게 묻는다",
+        "눈앞의 이상한 점을 옆 직원에게 묻는다",
         "다음 결재 단계로 움직인다",
       ],
       [

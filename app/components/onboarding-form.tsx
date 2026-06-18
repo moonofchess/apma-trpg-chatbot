@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 
 export type IntakeData = {
   name: string;
@@ -56,7 +56,7 @@ export function OnboardingForm({ onSubmit, disabled }: OnboardingFormProps) {
   const [background, setBackground] = useState("");
   const [secret, setSecret] = useState("");
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: SubmitEvent) => {
     event.preventDefault();
     if (!lastName.trim() || !givenName.trim() || !age.trim() || disabled) return;
 
@@ -79,7 +79,7 @@ export function OnboardingForm({ onSubmit, disabled }: OnboardingFormProps) {
       <p className="empty-badge">입사 D-Day</p>
       <p className="empty-title">신규 직원 등록</p>
       <p className="empty-hint">
-        사원증 발급 전 기본 정보를 입력하세요. 확인 후 OT가 시작됩니다.
+        채용이 확정되었습니다. 제출하면 오늘이 시작됩니다.
       </p>
 
       <div className="intake-name-row">
@@ -158,7 +158,7 @@ export function OnboardingForm({ onSubmit, disabled }: OnboardingFormProps) {
         className="start-button"
         disabled={disabled || !lastName.trim() || !givenName.trim() || !age.trim()}
       >
-        OT 시작
+        입사 신고
       </button>
     </form>
   );

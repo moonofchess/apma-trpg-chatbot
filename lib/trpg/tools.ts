@@ -64,6 +64,14 @@ export const trpgTools = {
     execute: async (clearance) => clearance,
   }),
 
+  setHorrorMode: tool({
+    description: "괴이 위협이 시작되는 순간 active: true, 격리·해결 완료 직후 active: false로 호출. 서사 분위기 전환과 동시에 실행한다.",
+    inputSchema: z.object({
+      active: z.boolean(),
+    }),
+    execute: async ({ active }) => ({ active }),
+  }),
+
   suggestReplies: tool({
     description:
       "매 턴 마지막에 필수 호출. 플레이어가 고를 답변 3개. 현재 장면·플레이어가 아는 정보만 반영하고, 챕터 흐름이 자연스럽게 이어지게 제안. 본문에 목록으로 쓰지 말 것.",

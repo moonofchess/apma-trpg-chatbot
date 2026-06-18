@@ -6,7 +6,7 @@ import {
   lastAssistantMessageIsCompleteWithToolCalls,
   type UIMessage,
 } from "ai";
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { EmployeeCard } from "./components/employee-card";
 import { MessageContent, type DiceRollInput } from "./components/message-content";
@@ -93,7 +93,7 @@ function formatSavedAt(value: string) {
 
 function sameReplies(a: string[], b: string[]) {
   if (a.length !== b.length) return false;
-  return a.every((reply, index) => reply.trim() === b[index]?.trim());
+  return a.every((reply, index) => reply.trim() === b[index].trim());
 }
 
 function getPreviousAssistantReplies(
@@ -140,7 +140,7 @@ export default function ChatPage() {
     [messageParts],
   );
 
-  const { profile, chapter } = useMemo(
+  const { profile, chapter, horrorMode } = useMemo(
     () => extractGameState(messageParts.map((m) => m.parts)),
     [messageParts],
   );
@@ -224,7 +224,7 @@ export default function ChatPage() {
     setInput("");
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: SubmitEvent) => {
     event.preventDefault();
     sendUserMessage(input);
   };
@@ -285,7 +285,7 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="app-shell">
+    <div className={horrorMode ? "app-shell horror-mode" : "app-shell"}>
       <header className="top-bar">
         <div className="top-bar-left">
           <span className="org-logo">괴</span>
@@ -398,21 +398,21 @@ export default function ChatPage() {
                     message.role === "assistant" && message.id === latestAssistantId;
 
                   return (
-                  <div
-                    key={message.id}
-                    ref={isLatestAssistant ? latestAssistantRef : undefined}
-                    className={`message ${message.role === "user" ? "user" : "assistant"}`}
-                  >
-                    <span className="message-label">
-                      {message.role === "user" ? "업무 기록" : "근무일지"}
-                    </span>
-                    <MessageContent
-                      parts={message.parts}
-                      role={message.role}
-                      onRollDice={handleRollDice}
-                      diceDisabled={isLoading}
-                    />
-                  </div>
+                    <div
+                      key={message.id}
+                      ref={isLatestAssistant ? latestAssistantRef : undefined}
+                      className={`message ${message.role === "user" ? "user" : "assistant"}`}
+                    >
+                      <span className="message-label">
+                        {message.role === "user" ? "업무 기록" : "근무일지"}
+                      </span>
+                      <MessageContent
+                        parts={message.parts}
+                        role={message.role}
+                        onRollDice={handleRollDice}
+                        diceDisabled={isLoading}
+                      />
+                    </div>
                   );
                 })}
               </>

@@ -29,6 +29,7 @@ const HIDDEN_TOOLS = new Set([
   "tool-updateEmployeeProfile",
   "tool-setChapter",
   "tool-updateClearance",
+  "tool-setHorrorMode",
   "tool-issueForm",
   "tool-stampApproval",
   "tool-suggestReplies",

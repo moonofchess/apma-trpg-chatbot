@@ -20,8 +20,7 @@ export function EmployeeCard({
   hasSession,
   intake,
 }: EmployeeCardProps) {
-  const gmAssigned =
-    hasSession && profile.name !== DEFAULT_PROFILE.name && profile.name !== "—";
+  const gmAssigned = hasSession && profile.name !== DEFAULT_PROFILE.name;
 
   const displayName = gmAssigned
     ? profile.name
