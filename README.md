@@ -28,7 +28,10 @@ cp .env.example .env.local
 
 ```env
 OPENAI_API_KEY=your-api-key-here
+OPENAI_MODEL=gpt-4o
 ```
+
+`OPENAI_MODEL`은 생략하면 `gpt-4o`를 사용합니다. 더 높은 품질의 모델 접근 권한이 있으면 이 값만 바꿔서 비교할 수 있습니다.
 
 3. 개발 서버를 실행합니다.
 
