@@ -8,6 +8,7 @@ import { EmployeeCard } from "./components/employee-card";
 import { MessageContent } from "./components/message-content";
 import {
   buildIntakeMessage,
+  getIntakeFullName,
   OnboardingForm,
   type IntakeData,
 } from "./components/onboarding-form";
@@ -99,7 +100,8 @@ export default function ChatPage() {
   const [saveSlots, setSaveSlots] = useState<SaveSlot[]>(Array(MAX_SAVE_SLOTS).fill(null));
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
   const [storageReady, setStorageReady] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const latestAssistantRef = useRef<HTMLDivElement>(null);
+  const lastFocusedAssistantIdRef = useRef<string | null>(null);
   const { messages, sendMessage, setMessages, status } = useChat({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
   });
@@ -121,8 +123,13 @@ export default function ChatPage() {
     [messageParts],
   );
 
+  const latestAssistantId = useMemo(
+    () => [...messages].reverse().find((message) => message.role === "assistant")?.id ?? null,
+    [messages],
+  );
+
   const saveTitle = useMemo(() => {
-    const name = intake?.name || profile.name;
+    const name = intake ? getIntakeFullName(intake) : profile.name;
     const chapterTitle = chapter?.title || "입사 대기";
     return `${name} · ${chapterTitle}`;
   }, [chapter, intake, profile]);
@@ -150,8 +157,11 @@ export default function ChatPage() {
   }, [chapter, messageParts, messages, isLoading]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isLoading]);
+    if (!latestAssistantId || latestAssistantId === lastFocusedAssistantIdRef.current) return;
+
+    lastFocusedAssistantIdRef.current = latestAssistantId;
+    latestAssistantRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [latestAssistantId]);
 
   useEffect(() => {
     const activeSession = readSavedSession(ACTIVE_SESSION_KEY);
@@ -346,9 +356,14 @@ export default function ChatPage() {
               <OnboardingForm onSubmit={handleIntakeSubmit} disabled={isLoading} />
             ) : (
               <>
-                {messages.map((message) => (
+                {messages.map((message) => {
+                  const isLatestAssistant =
+                    message.role === "assistant" && message.id === latestAssistantId;
+
+                  return (
                   <div
                     key={message.id}
+                    ref={isLatestAssistant ? latestAssistantRef : undefined}
                     className={`message ${message.role === "user" ? "user" : "assistant"}`}
                   >
                     <span className="message-label">
@@ -356,14 +371,17 @@ export default function ChatPage() {
                     </span>
                     <MessageContent parts={message.parts} role={message.role} />
                   </div>
-                ))}
-                <div ref={messagesEndRef} />
+                  );
+                })}
               </>
             )}
           </div>
 
           {isLoading && (
-            <p className="status">기록 중… (결재 대기)</p>
+            <p className="status" aria-live="polite">
+              <span className="loading-spinner" aria-hidden="true" />
+              기록 중… (결재 대기)
+            </p>
           )}
 
           {hasSession && suggestedReplies.length > 0 && (

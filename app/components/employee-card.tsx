@@ -5,7 +5,7 @@ import {
   type EmployeeProfile,
 } from "@/lib/trpg/employee-profile";
 
-import type { IntakeData } from "./onboarding-form";
+import { getIntakeFullName, type IntakeData } from "./onboarding-form";
 
 type EmployeeCardProps = {
   profile: EmployeeProfile;
@@ -25,7 +25,9 @@ export function EmployeeCard({
 
   const displayName = gmAssigned
     ? profile.name
-    : intake?.name || EMPTY_PROFILE_LABEL;
+    : intake
+      ? getIntakeFullName(intake)
+      : EMPTY_PROFILE_LABEL;
 
   const displayAge = gmAssigned ? profile.age : intake?.age;
 
