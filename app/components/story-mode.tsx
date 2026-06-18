@@ -41,6 +41,7 @@ export function StoryMode({ onBack }: StoryModeProps) {
   const [clearedSessions, setClearedSessions] = useState<number[]>([]);
   const [choiceState, setChoiceState] = useState<ChoiceState>({ phase: "idle" });
   const [showSessionSelect, setShowSessionSelect] = useState(true);
+  const [horrorActive, setHorrorActive] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
   const node: StoryNode | null = currentNodeId ? (STORY_NODES.get(currentNodeId) ?? null) : null;
@@ -59,6 +60,8 @@ export function StoryMode({ onBack }: StoryModeProps) {
   useEffect(() => {
     if (!node) return;
     applyStats(node.statsOnEnter);
+    if (node.horrorMode === true) setHorrorActive(true);
+    if (node.horrorMode === false) setHorrorActive(false);
   }, [node?.id]);
 
   useEffect(() => {
@@ -105,11 +108,11 @@ export function StoryMode({ onBack }: StoryModeProps) {
     if (!session) return;
     setStats({ ...DEFAULT_STATS });
     setChoiceState({ phase: "idle" });
+    setHorrorActive(false);
     setShowSessionSelect(false);
     setCurrentNodeId(session.firstNodeId);
   };
 
-  const horrorActive = node?.horrorMode === true;
 
   if (showSessionSelect) {
     return (
