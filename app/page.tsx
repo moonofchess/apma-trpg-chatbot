@@ -8,6 +8,9 @@ import {
 } from "ai";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { ModeSelect } from "./components/mode-select";
+import { StoryMode } from "./components/story-mode";
+
 import { EmployeeCard } from "./components/employee-card";
 import { MessageContent, type DiceRollInput } from "./components/message-content";
 import {
@@ -106,6 +109,20 @@ function getPreviousAssistantReplies(
 }
 
 export default function ChatPage() {
+  const [appMode, setAppMode] = useState<"select" | "story" | "chat">("select");
+
+  if (appMode === "select") {
+    return <ModeSelect onSelect={setAppMode} />;
+  }
+
+  if (appMode === "story") {
+    return <StoryMode onBack={() => setAppMode("select")} />;
+  }
+
+  return <ChatPageInner />;
+}
+
+function ChatPageInner() {
   const [input, setInput] = useState("");
   const [intake, setIntake] = useState<IntakeData | null>(null);
   const [saveSlots, setSaveSlots] = useState<SaveSlot[]>(Array(MAX_SAVE_SLOTS).fill(null));

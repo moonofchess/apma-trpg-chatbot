@@ -1310,6 +1310,597 @@ body {
   color: #7a5050;
 }
 
+/* ── 모드 선택 화면 ── */
+.mode-select {
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem;
+  background: #d8dde5;
+}
+
+.mode-select-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.mode-select-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  background: #1a3a5c;
+  color: #fff;
+  font-size: 1.8rem;
+  font-weight: 800;
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.mode-select-agency {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1a3a5c;
+  letter-spacing: -0.02em;
+}
+
+.mode-select-sub {
+  font-size: 0.72rem;
+  color: #6b7a8d;
+  letter-spacing: 0.04em;
+}
+
+.mode-select-title-block {
+  text-align: center;
+}
+
+.mode-select-label {
+  font-size: 0.72rem;
+  color: #6b7a8d;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.4rem;
+}
+
+.mode-select-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1a2332;
+}
+
+.mode-select-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  width: 100%;
+  max-width: 420px;
+}
+
+.mode-btn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3rem;
+  padding: 1.1rem 1.3rem;
+  border-radius: 0.5rem;
+  border: 2px solid #b8c1cc;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.mode-btn:not(:disabled):hover {
+  border-color: #1a3a5c;
+  box-shadow: 0 4px 16px rgba(26, 58, 92, 0.15);
+}
+
+.mode-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mode-btn-icon {
+  font-size: 1.3rem;
+}
+
+.mode-btn-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a2332;
+}
+
+.mode-btn-desc {
+  font-size: 0.78rem;
+  color: #6b7a8d;
+}
+
+.mode-btn-badge {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.8rem;
+  padding: 0.2rem 0.5rem;
+  background: #e0e6ee;
+  color: #6b7a8d;
+  font-size: 0.68rem;
+  font-weight: 700;
+  border-radius: 0.25rem;
+  letter-spacing: 0.05em;
+}
+
+.mode-btn-story {
+  border-color: #1a3a5c;
+}
+
+.mode-select-footer {
+  font-size: 0.68rem;
+  color: #9aa5b4;
+}
+
+/* ── 스토리 모드 레이아웃 ── */
+.story-back-btn {
+  cursor: pointer;
+  font-size: 0.75rem;
+  text-decoration: none;
+  border: 2px solid #c41e3a;
+  color: #ff6b6b;
+  padding: 0.25rem 0.65rem;
+  font-weight: 700;
+  transform: none;
+  letter-spacing: 0;
+  transition: background 0.15s;
+}
+
+.story-back-btn:hover {
+  background: rgba(196, 30, 58, 0.12);
+}
+
+.story-main {
+  flex: 1;
+  min-height: 0;
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1rem 1rem 0.75rem;
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 1rem;
+  overflow: hidden;
+}
+
+/* ── 스탯 패널 ── */
+.story-stats-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.9rem;
+  background: #fff;
+  border: 1px solid #b8c1cc;
+  border-radius: 0.5rem;
+  align-self: start;
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+.story-stats-title {
+  font-size: 0.65rem;
+  color: #6b7a8d;
+  letter-spacing: 0.1em;
+  text-align: center;
+  margin-bottom: 0.25rem;
+}
+
+.story-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.73rem;
+}
+
+.story-stat-label {
+  color: #6b7a8d;
+  flex: 1;
+  white-space: nowrap;
+}
+
+.story-stat-value {
+  font-weight: 700;
+  color: #1a2332;
+}
+
+.story-stress-bar {
+  flex: 1;
+  height: 6px;
+  background: #e0e6ee;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.story-stress-fill {
+  height: 100%;
+  background: #c41e3a;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.story-time-badge {
+  margin-top: 0.5rem;
+  padding: 0.3rem 0.5rem;
+  background: #f0f3f7;
+  border: 1px solid #d0d8e0;
+  border-radius: 0.3rem;
+  font-size: 0.68rem;
+  color: #6b7a8d;
+  text-align: center;
+}
+
+/* ── 세션 선택 화면 ── */
+.story-session-select {
+  flex: 1;
+  max-width: 680px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  overflow-y: auto;
+}
+
+.story-act-header {
+  text-align: center;
+}
+
+.story-act-label {
+  font-size: 0.75rem;
+  color: #6b7a8d;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.4rem;
+}
+
+.story-act-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1a3a5c;
+}
+
+.story-session-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.story-session-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  padding: 1rem 1.2rem;
+  background: #fff;
+  border: 1px solid #b8c1cc;
+  border-radius: 0.5rem;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.story-session-btn:not(:disabled):hover {
+  border-color: #1a3a5c;
+  box-shadow: 0 2px 10px rgba(26, 58, 92, 0.1);
+}
+
+.story-session-btn.locked {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.story-session-btn.cleared {
+  border-color: #2a7a2a;
+  background: #f8fff8;
+}
+
+.story-session-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.story-session-num {
+  font-size: 0.68rem;
+  color: #6b7a8d;
+  letter-spacing: 0.06em;
+}
+
+.story-session-clear {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #2a7a2a;
+  letter-spacing: 0.08em;
+  padding: 0.1rem 0.4rem;
+  border: 1px solid #2a7a2a;
+  border-radius: 0.2rem;
+}
+
+.story-session-lock {
+  font-size: 0.68rem;
+  color: #9aa5b4;
+}
+
+.story-session-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a2332;
+}
+
+.story-session-sub {
+  font-size: 0.78rem;
+  color: #6b7a8d;
+}
+
+/* ── 스토리 패널 (씬 영역) ── */
+.story-panel {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid #b8c1cc;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 10px rgba(15, 24, 36, 0.07);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.story-scene-header {
+  flex-shrink: 0;
+  padding: 0.9rem 1.25rem 0.7rem;
+  background: #f3f5f8;
+  border-bottom: 1px solid #d0d8e0;
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.story-scene-tag {
+  font-size: 0.7rem;
+  color: #c41e3a;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.story-scene-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a3a5c;
+}
+
+.story-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.story-line {
+  font-size: 0.92rem;
+  line-height: 1.75;
+  color: #1a2332;
+  white-space: pre-line;
+}
+
+.story-system-messages {
+  margin-top: 0.25rem;
+  padding: 0.75rem 1rem;
+  background: #f0f4fa;
+  border-left: 3px solid #1a3a5c;
+  border-radius: 0 0.3rem 0.3rem 0;
+}
+
+.story-system-msg {
+  font-size: 0.8rem;
+  color: #1a3a5c;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+/* ── 선택지 ── */
+.story-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.story-choice-btn {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid #c5ced8;
+  border-radius: 0.4rem;
+  background: #f8fafc;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.story-choice-btn:hover {
+  background: #e8f0fa;
+  border-color: #1a3a5c;
+}
+
+.story-choice-label {
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1a3a5c;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 50%;
+}
+
+.story-choice-text {
+  flex: 1;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: #1a2332;
+}
+
+.story-choice-badge {
+  flex-shrink: 0;
+  font-size: 0.68rem;
+  color: #2a7a5a;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ── 결과 표시 ── */
+.story-result {
+  margin-top: 0.5rem;
+  padding: 1rem 1.1rem;
+  border-radius: 0.4rem;
+  border-left: 4px solid #ccc;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.story-result-correct {
+  border-left-color: #2a7a2a;
+  background: #f6fff6;
+}
+
+.story-result-death {
+  border-left-color: #8b0000;
+  background: #fff6f6;
+}
+
+.story-result-penalty {
+  border-left-color: #b8860b;
+  background: #fffbf0;
+}
+
+.story-result-neutral {
+  border-left-color: #1a3a5c;
+  background: #f0f4fa;
+}
+
+.story-result-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: inherit;
+}
+
+.story-result-correct .story-result-badge { color: #2a7a2a; }
+.story-result-death .story-result-badge { color: #8b0000; }
+.story-result-penalty .story-result-badge { color: #b8860b; }
+.story-result-neutral .story-result-badge { color: #1a3a5c; }
+
+/* ── 계속/재시도 버튼 ── */
+.story-continue-btn {
+  align-self: flex-start;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 0.35rem;
+  background: #1a3a5c;
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.story-continue-btn:hover {
+  background: #0f2840;
+}
+
+.story-continue-btn.retry {
+  background: #8b0000;
+}
+
+.story-continue-btn.retry:hover {
+  background: #aa0000;
+}
+
+.story-continue-btn.session-clear {
+  background: #2a5a2a;
+  align-self: stretch;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.story-continue-btn.session-clear:hover {
+  background: #1e4a1e;
+}
+
+/* ── 호러 모드: 스토리 영역 ── */
+.horror-mode .story-stats-panel {
+  background: #111116;
+  border-color: #2a1010;
+}
+
+.horror-mode .story-stat-label { color: #7a5050; }
+.horror-mode .story-stat-value { color: #e0d4d4; }
+.horror-mode .story-time-badge {
+  background: #0d0d12;
+  border-color: #2a1010;
+  color: #7a5050;
+}
+
+.horror-mode .story-panel {
+  background: #111116;
+  border-color: #2a1010;
+}
+
+.horror-mode .story-scene-header {
+  background: #0d0d12;
+  border-bottom-color: #2a1010;
+}
+
+.horror-mode .story-scene-title { color: #e0d4d4; }
+.horror-mode .story-line { color: #e0d4d4; }
+
+.horror-mode .story-system-messages {
+  background: #0a0a0f;
+  border-left-color: #8b0000;
+}
+
+.horror-mode .story-system-msg { color: #cc4444; }
+
+.horror-mode .story-choice-btn {
+  background: #0d0d12;
+  border-color: #2a1010;
+  color: #e0d4d4;
+}
+
+.horror-mode .story-choice-btn:hover {
+  background: #1a1020;
+  border-color: #8b0000;
+}
+
+.horror-mode .story-choice-label { background: #8b0000; }
+
+.horror-mode .story-result-death {
+  background: #120808;
+  border-left-color: #8b0000;
+}
+
+.horror-mode .story-continue-btn { background: #8b0000; }
+.horror-mode .story-continue-btn:hover { background: #aa0000; }
+
 @media (max-width: 640px) {
   html,
   body {

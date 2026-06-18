@@ -10,7 +10,7 @@ import { TRPG_SYSTEM_PROMPT } from "@/lib/trpg/system-prompt";
 import { trpgTools } from "@/lib/trpg/tools";
 
 export const maxDuration = 60;
-const DEFAULT_MODEL = "gpt-4o";
+const DEFAULT_MODEL = "gpt-5.4-mini";
 
 function jsonError(message: string, status: number) {
   return Response.json({ error: message }, { status });
@@ -56,10 +56,17 @@ export async function POST(req: Request) {
     }
 
     const result = streamText({
-      model: openai(process.env.OPENAI_MODEL ?? DEFAULT_MODEL),
+      model: openai.responses(process.env.OPENAI_MODEL ?? DEFAULT_MODEL),
       system: `${TRPG_SYSTEM_PROMPT}${extractIntakeNameGuide(messages)}`,
       messages: await convertToModelMessages(messages, { tools: trpgTools }),
       tools: trpgTools,
+      providerOptions: {
+        openai: {
+          reasoningEffort: "xhigh",
+          textVerbosity: "high",
+          store: true,
+        },
+      },
       stopWhen: stepCountIs(8),
     });
 
