@@ -140,7 +140,7 @@ export default function ChatPage() {
     [messageParts],
   );
 
-  const { profile, chapter, horrorMode } = useMemo(
+  const { profile, chapter, horrorMode, gameDate } = useMemo(
     () => extractGameState(messageParts.map((m) => m.parts)),
     [messageParts],
   );
@@ -224,7 +224,7 @@ export default function ChatPage() {
     setInput("");
   };
 
-  const handleSubmit = (event: SubmitEvent) => {
+  const handleSubmit = (event: { preventDefault(): void }) => {
     event.preventDefault();
     sendUserMessage(input);
   };
@@ -310,11 +310,10 @@ export default function ChatPage() {
             <div>
               <h1>근무일지 시스템</h1>
               <p>
+                {gameDate}
                 {chapter
-                  ? chapter.subtitle
-                    ? `${chapter.title} — ${chapter.subtitle}`
-                    : chapter.title
-                  : "2026년 · 내부망 전용"}
+                  ? ` · ${chapter.subtitle ? `${chapter.title} — ${chapter.subtitle}` : chapter.title}`
+                  : " · 내부망 전용"}
               </p>
             </div>
             <div className="panel-actions">

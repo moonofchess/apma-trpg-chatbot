@@ -16,7 +16,7 @@ export const DEFAULT_PROFILE: EmployeeProfile = {
   name: "—",
   department: "미배정",
   rank: "말단",
-  employeeId: "APMA-2026-___",
+  employeeId: "APMA-___",
 };
 
 export const EMPTY_PROFILE_LABEL = "입사 예정";
@@ -53,14 +53,20 @@ function isHorrorMode(output: unknown): output is { active: boolean } {
   return typeof output === "object" && output !== null && "active" in output;
 }
 
+function isGameDate(output: unknown): output is { date: string } {
+  return typeof output === "object" && output !== null && "date" in output;
+}
+
 export function extractGameState(partsList: MessagePart[][]): {
   profile: EmployeeProfile;
   chapter: ChapterInfo | null;
   horrorMode: boolean;
+  gameDate: string;
 } {
   let profile: EmployeeProfile = { ...DEFAULT_PROFILE };
   let chapter: ChapterInfo | null = null;
   let horrorMode = false;
+  let gameDate = "2026년 3월 1일";
 
   for (const parts of partsList) {
     for (const part of parts) {
@@ -92,8 +98,12 @@ export function extractGameState(partsList: MessagePart[][]): {
       if (part.type === "tool-setHorrorMode" && isHorrorMode(part.output)) {
         horrorMode = part.output.active;
       }
+
+      if (part.type === "tool-setGameDate" && isGameDate(part.output)) {
+        gameDate = part.output.date;
+      }
     }
   }
 
-  return { profile, chapter, horrorMode };
+  return { profile, chapter, horrorMode, gameDate };
 }

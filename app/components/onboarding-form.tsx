@@ -56,7 +56,7 @@ export function OnboardingForm({ onSubmit, disabled }: OnboardingFormProps) {
   const [background, setBackground] = useState("");
   const [secret, setSecret] = useState("");
 
-  const handleSubmit = (event: SubmitEvent) => {
+  const handleSubmit = (event: { preventDefault(): void }) => {
     event.preventDefault();
     if (!lastName.trim() || !givenName.trim() || !age.trim() || disabled) return;
 

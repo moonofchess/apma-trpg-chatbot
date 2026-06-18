@@ -72,6 +72,14 @@ export const trpgTools = {
     execute: async ({ active }) => ({ active }),
   }),
 
+  setGameDate: tool({
+    description: "근무일 날짜 변경. 날이 바뀌거나 시간이 경과하는 장면 전환 시 호출.",
+    inputSchema: z.object({
+      date: z.string().describe('예: "2026년 3월 2일"'),
+    }),
+    execute: async ({ date }) => ({ date }),
+  }),
+
   suggestReplies: tool({
     description:
       "매 턴 마지막에 필수 호출. 플레이어가 고를 답변 3개. 현재 장면·플레이어가 아는 정보만 반영하고, 챕터 흐름이 자연스럽게 이어지게 제안. 본문에 목록으로 쓰지 말 것.",

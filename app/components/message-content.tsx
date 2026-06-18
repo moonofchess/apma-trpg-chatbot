@@ -30,6 +30,7 @@ const HIDDEN_TOOLS = new Set([
   "tool-setChapter",
   "tool-updateClearance",
   "tool-setHorrorMode",
+  "tool-setGameDate",
   "tool-issueForm",
   "tool-stampApproval",
   "tool-suggestReplies",
