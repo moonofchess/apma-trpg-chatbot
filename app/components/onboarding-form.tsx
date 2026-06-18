@@ -43,9 +43,6 @@ export function buildIntakeMessage(data: IntakeData): string {
     `이전 배경: ${data.background || "미기재"}`,
     `숨기는 비밀: ${data.secret || "없음"}`,
     "",
-    "서술문에서는 제 성명이나 이름을 직접 부르지 말고 '당신'이라고 써 주세요.",
-    `등장인물이 공식적으로 부를 때는 성명(${fullName})이나 직책을 쓰고, 조금 안면이 트인 뒤에는 이름만 붙여 '${givenName}님'처럼 불러 주세요.`,
-    "",
     "오늘 입사 첫날입니다. 인사팀 오리엔테이션(OT)부터 시작해 주세요.",
     "OT 도중 사원증을 발급하고 부서·직급·사번을 배정해 주세요.",
   ].join("\n");
@@ -91,7 +88,7 @@ export function OnboardingForm({ onSubmit, disabled }: OnboardingFormProps) {
           <input
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
-            placeholder="박"
+            placeholder="홍"
             required
             disabled={disabled}
           />
@@ -102,7 +99,7 @@ export function OnboardingForm({ onSubmit, disabled }: OnboardingFormProps) {
           <input
             value={givenName}
             onChange={(e) => setGivenName(e.target.value)}
-            placeholder="진영"
+            placeholder="길동"
             required
             disabled={disabled}
           />

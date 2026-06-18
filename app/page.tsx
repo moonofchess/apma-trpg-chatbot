@@ -1,11 +1,15 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport, type UIMessage } from "ai";
+import {
+  DefaultChatTransport,
+  lastAssistantMessageIsCompleteWithToolCalls,
+  type UIMessage,
+} from "ai";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import { EmployeeCard } from "./components/employee-card";
-import { MessageContent } from "./components/message-content";
+import { MessageContent, type DiceRollInput } from "./components/message-content";
 import {
   buildIntakeMessage,
   getIntakeFullName,
@@ -18,6 +22,7 @@ import {
   buildFallbackSuggestedReplies,
   extractLatestSuggestedReplies,
 } from "@/lib/trpg/suggested-replies";
+import { rollDice } from "@/lib/trpg/dice";
 
 const ACTIVE_SESSION_KEY = "apma-trpg-active-session";
 const SAVE_SLOTS_KEY = "apma-trpg-save-slots";
@@ -29,6 +34,12 @@ type SavedSession = {
   updatedAt: string;
   messages: UIMessage[];
   intake: IntakeData | null;
+};
+
+type ToolMessagePart = {
+  type: string;
+  state?: string;
+  output?: unknown;
 };
 
 function readSavedSession(key: string): SavedSession | null {
@@ -86,7 +97,7 @@ function sameReplies(a: string[], b: string[]) {
 }
 
 function getPreviousAssistantReplies(
-  messages: { role: string; parts: { type: string; state?: string; output?: unknown }[] }[],
+  messages: { role: string; parts: ToolMessagePart[] }[],
 ) {
   const assistantMessages = messages.filter((message) => message.role === "assistant");
   if (assistantMessages.length < 2) return [];
@@ -102,8 +113,9 @@ export default function ChatPage() {
   const [storageReady, setStorageReady] = useState(false);
   const latestAssistantRef = useRef<HTMLDivElement>(null);
   const lastFocusedAssistantIdRef = useRef<string | null>(null);
-  const { messages, sendMessage, setMessages, status } = useChat({
+  const { messages, sendMessage, setMessages, status, addToolOutput } = useChat({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
+    sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
   });
 
   const isLoading = status === "streaming" || status === "submitted";
@@ -113,9 +125,19 @@ export default function ChatPage() {
     () =>
       messages.map((m) => ({
         role: m.role,
-        parts: m.parts as { type: string; state?: string; output?: unknown }[],
+        parts: m.parts as ToolMessagePart[],
       })),
     [messages],
+  );
+
+  const hasPendingDiceRoll = useMemo(
+    () =>
+      messageParts.some((message) =>
+        message.parts.some(
+          (part) => part.type === "tool-rollDice" && part.state === "input-available",
+        ),
+      ),
+    [messageParts],
   );
 
   const { profile, chapter } = useMemo(
@@ -135,7 +157,7 @@ export default function ChatPage() {
   }, [chapter, intake, profile]);
 
   const suggestedReplies = useMemo(() => {
-    if (isLoading) return [];
+    if (isLoading || hasPendingDiceRoll) return [];
     const last = messages[messages.length - 1];
     if (!last || last.role !== "assistant") return [];
     const replies = extractLatestSuggestedReplies(messageParts);
@@ -154,7 +176,7 @@ export default function ChatPage() {
     }
 
     return fallback;
-  }, [chapter, messageParts, messages, isLoading]);
+  }, [chapter, messageParts, messages, isLoading, hasPendingDiceRoll]);
 
   useEffect(() => {
     if (!latestAssistantId || latestAssistantId === lastFocusedAssistantIdRef.current) return;
@@ -197,7 +219,7 @@ export default function ChatPage() {
 
   const sendUserMessage = (text: string) => {
     const trimmed = text.trim();
-    if (!trimmed || isLoading) return;
+    if (!trimmed || isLoading || hasPendingDiceRoll) return;
     sendMessage({ text: trimmed });
     setInput("");
   };
@@ -211,6 +233,21 @@ export default function ChatPage() {
     if (isLoading) return;
     setIntake(data);
     sendMessage({ text: buildIntakeMessage(data) });
+  };
+
+  const handleRollDice = (toolCallId: string, diceInput: DiceRollInput) => {
+    if (isLoading) return;
+
+    addToolOutput({
+      tool: "rollDice",
+      toolCallId,
+      output: rollDice(
+        diceInput.count,
+        diceInput.sides,
+        diceInput.modifier ?? 0,
+        diceInput.reason,
+      ),
+    });
   };
 
   const saveToSlot = (slotIndex: number) => {
@@ -369,7 +406,12 @@ export default function ChatPage() {
                     <span className="message-label">
                       {message.role === "user" ? "업무 기록" : "근무일지"}
                     </span>
-                    <MessageContent parts={message.parts} role={message.role} />
+                    <MessageContent
+                      parts={message.parts}
+                      role={message.role}
+                      onRollDice={handleRollDice}
+                      diceDisabled={isLoading}
+                    />
                   </div>
                   );
                 })}
@@ -381,6 +423,12 @@ export default function ChatPage() {
             <p className="status" aria-live="polite">
               <span className="loading-spinner" aria-hidden="true" />
               기록 중… (결재 대기)
+            </p>
+          )}
+
+          {!isLoading && hasPendingDiceRoll && (
+            <p className="status" aria-live="polite">
+              판정 대기 중… 주사위를 던지면 근무일지가 이어집니다.
             </p>
           )}
 
@@ -396,10 +444,17 @@ export default function ChatPage() {
             <input
               value={input}
               onChange={(event) => setInput(event.target.value)}
-              placeholder="직접 입력… (예: 신분증을 건넨다)"
-              disabled={isLoading || !hasSession}
+              placeholder={
+                hasPendingDiceRoll
+                  ? "주사위를 먼저 던져 주세요"
+                  : "직접 입력… (예: 신분증을 건넨다)"
+              }
+              disabled={isLoading || !hasSession || hasPendingDiceRoll}
             />
-            <button type="submit" disabled={isLoading || !input.trim() || !hasSession}>
+            <button
+              type="submit"
+              disabled={isLoading || !input.trim() || !hasSession || hasPendingDiceRoll}
+            >
               기록
             </button>
           </form>

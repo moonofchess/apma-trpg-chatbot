@@ -14,6 +14,15 @@ type MessagePart = {
 type MessageContentProps = {
   parts: MessagePart[];
   role?: string;
+  onRollDice?: (toolCallId: string, input: DiceRollInput) => void;
+  diceDisabled?: boolean;
+};
+
+export type DiceRollInput = {
+  count: number;
+  sides: number;
+  modifier?: number;
+  reason: string;
 };
 
 const HIDDEN_TOOLS = new Set([
@@ -57,17 +66,46 @@ function isStampOutput(
   );
 }
 
+function isDiceInput(input: unknown): input is DiceRollInput {
+  return (
+    typeof input === "object" &&
+    input !== null &&
+    "count" in input &&
+    "sides" in input &&
+    "reason" in input
+  );
+}
+
+function describeDiceExpression(expression: string) {
+  const match = expression.match(/^(\d+)d(\d+)([+-]\d+)?$/);
+  if (!match) return expression;
+
+  const [, countText, sidesText] = match;
+  const count = Number(countText);
+  const sides = Number(sidesText);
+  const countLabel = count === 1 ? "한 번" : `${count}번`;
+
+  return `1부터 ${sides}까지의 값 중 하나를 ${countLabel} 뽑습니다. 높을수록 유리합니다.`;
+}
+
+function formatRolls(rolls: number[]) {
+  if (rolls.length === 1) return `${rolls[0]}점`;
+  return rolls.map((roll, index) => `${index + 1}번째 ${roll}점`).join(", ");
+}
+
 function DiceBlock({ result }: { result: DiceRollResult }) {
   return (
     <div className="dice-roll">
       <div className="dice-stamp">판정</div>
       <div className="dice-roll-header">
-        <span className="dice-label">업무 판정서</span>
+        <span className="dice-label">업무 판정 결과</span>
         <span className="dice-reason">{result.reason}</span>
       </div>
-      <div className="dice-expression">{result.expression}</div>
+      <div className="dice-expression">
+        {describeDiceExpression(result.expression)}
+      </div>
       <div className="dice-detail">
-        개별: [{result.rolls.join(", ")}]
+        나온 값: {formatRolls(result.rolls)}
         {result.modifier !== 0 && (
           <span>
             {" "}
@@ -76,7 +114,51 @@ function DiceBlock({ result }: { result: DiceRollResult }) {
           </span>
         )}
       </div>
-      <div className="dice-total">최종: {result.total}</div>
+      <div className="dice-total">판정값: {result.total}점</div>
+    </div>
+  );
+}
+
+function PendingDiceBlock({
+  input,
+  toolCallId,
+  onRollDice,
+  disabled,
+}: {
+  input: DiceRollInput;
+  toolCallId?: string;
+  onRollDice?: (toolCallId: string, input: DiceRollInput) => void;
+  disabled?: boolean;
+}) {
+  return (
+    <div className="dice-roll dice-roll-pending">
+      <div className="dice-stamp">대기</div>
+      <div className="dice-roll-header">
+        <span className="dice-label">업무 판정</span>
+        <span className="dice-reason">{input.reason}</span>
+      </div>
+      <div className="dice-prompt">
+        <span className="dice-image" aria-hidden="true">
+          <span className="dice-pip dice-pip-1" />
+          <span className="dice-pip dice-pip-2" />
+          <span className="dice-pip dice-pip-3" />
+          <span className="dice-pip dice-pip-4" />
+          <span className="dice-pip dice-pip-5" />
+          <span className="dice-pip dice-pip-6" />
+        </span>
+        <div>
+          <p className="dice-prompt-title">판정이 들어갑니다.</p>
+          <p className="dice-expression">{describeDiceExpression(`${input.count}d${input.sides}`)}</p>
+        </div>
+      </div>
+      <button
+        type="button"
+        className="dice-roll-button"
+        disabled={disabled || !toolCallId || !onRollDice}
+        onClick={() => toolCallId && onRollDice?.(toolCallId, input)}
+      >
+        주사위 던지기
+      </button>
     </div>
   );
 }
@@ -115,7 +197,12 @@ function StampBlock({
   );
 }
 
-export function MessageContent({ parts, role }: MessageContentProps) {
+export function MessageContent({
+  parts,
+  role,
+  onRollDice,
+  diceDisabled,
+}: MessageContentProps) {
   return (
     <>
       {parts.map((part, index) => {
@@ -132,6 +219,22 @@ export function MessageContent({ parts, role }: MessageContentProps) {
               key={`text-${index}`}
               text={cleanText}
               separateLines={role === "assistant"}
+            />
+          );
+        }
+
+        if (
+          part.type === "tool-rollDice" &&
+          part.state === "input-available" &&
+          isDiceInput(part.input)
+        ) {
+          return (
+            <PendingDiceBlock
+              key={`dice-${index}`}
+              input={part.input}
+              toolCallId={"toolCallId" in part ? String(part.toolCallId) : undefined}
+              onRollDice={onRollDice}
+              disabled={diceDisabled}
             />
           );
         }

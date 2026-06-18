@@ -1,19 +1,15 @@
 import { tool } from "ai";
 import { z } from "zod";
 
-import { rollDice } from "./dice";
-
 export const trpgTools = {
   rollDice: tool({
-    description: "판정용 주사위. 서버 난수.",
+    description: "판정용 주사위. 사용자가 화면에서 직접 던진 뒤 결과를 받는다.",
     inputSchema: z.object({
       count: z.number().int().min(1).max(20),
       sides: z.number().int().min(2).max(100),
       modifier: z.number().int().min(-20).max(20).default(0),
       reason: z.string(),
     }),
-    execute: async ({ count, sides, modifier, reason }) =>
-      rollDice(count, sides, modifier, reason),
   }),
 
   updateEmployeeProfile: tool({
