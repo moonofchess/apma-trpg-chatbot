@@ -10,7 +10,7 @@ import { TRPG_SYSTEM_PROMPT } from "@/lib/trpg/system-prompt";
 import { trpgTools } from "@/lib/trpg/tools";
 
 export const maxDuration = 60;
-const DEFAULT_MODEL = "gpt-5.4-mini";
+const DEFAULT_MODEL = "gpt-4o";
 
 function jsonError(message: string, status: number) {
   return Response.json({ error: message }, { status });

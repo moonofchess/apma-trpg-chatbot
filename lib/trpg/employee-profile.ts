@@ -16,7 +16,7 @@ export const DEFAULT_PROFILE: EmployeeProfile = {
   name: "—",
   department: "미배정",
   rank: "말단",
-  employeeId: "APMA-___",
+  employeeId: "AP-___",
 };
 
 export const EMPTY_PROFILE_LABEL = "입사 예정";
