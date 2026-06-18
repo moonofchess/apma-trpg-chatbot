@@ -115,7 +115,7 @@ export default function ChatPage() {
                     <span className="message-label">
                       {message.role === "user" ? "업무 기록" : "근무일지"}
                     </span>
-                    <MessageContent parts={message.parts} />
+                    <MessageContent parts={message.parts} role={message.role} />
                   </div>
                 ))}
                 <div ref={messagesEndRef} />

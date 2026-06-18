@@ -11,16 +11,33 @@ import { trpgTools } from "@/lib/trpg/tools";
 
 export const maxDuration = 60;
 
+function jsonError(message: string, status: number) {
+  return Response.json({ error: message }, { status });
+}
+
 export async function POST(req: Request) {
-  const { messages }: { messages: UIMessage[] } = await req.json();
+  if (!process.env.OPENAI_API_KEY) {
+    return jsonError("OPENAI_API_KEY is not configured.", 500);
+  }
 
-  const result = streamText({
-    model: openai("gpt-4o"),
-    system: TRPG_SYSTEM_PROMPT,
-    messages: await convertToModelMessages(messages),
-    tools: trpgTools,
-    stopWhen: stepCountIs(8),
-  });
+  try {
+    const { messages }: { messages?: UIMessage[] } = await req.json();
 
-  return result.toUIMessageStreamResponse();
+    if (!Array.isArray(messages)) {
+      return jsonError("Request body must include a messages array.", 400);
+    }
+
+    const result = streamText({
+      model: openai("gpt-4o"),
+      system: TRPG_SYSTEM_PROMPT,
+      messages: await convertToModelMessages(messages),
+      tools: trpgTools,
+      stopWhen: stepCountIs(8),
+    });
+
+    return result.toUIMessageStreamResponse();
+  } catch (error) {
+    console.error("Chat API error", error);
+    return jsonError("Failed to start chat response.", 500);
+  }
 }

@@ -11,6 +11,11 @@ type MessagePart = {
   output?: unknown;
 };
 
+type MessageContentProps = {
+  parts: MessagePart[];
+  role?: string;
+};
+
 const HIDDEN_TOOLS = new Set([
   "tool-updateEmployeeProfile",
   "tool-setChapter",
@@ -110,7 +115,7 @@ function StampBlock({
   );
 }
 
-export function MessageContent({ parts }: { parts: MessagePart[] }) {
+export function MessageContent({ parts, role }: MessageContentProps) {
   return (
     <>
       {parts.map((part, index) => {
@@ -122,7 +127,13 @@ export function MessageContent({ parts }: { parts: MessagePart[] }) {
           const { cleanText } = stripSuggestRepliesFromText(part.text);
           if (!cleanText.trim()) return null;
 
-          return <FormattedText key={`text-${index}`} text={cleanText} />;
+          return (
+            <FormattedText
+              key={`text-${index}`}
+              text={cleanText}
+              separateLines={role === "assistant"}
+            />
+          );
         }
 
         if (

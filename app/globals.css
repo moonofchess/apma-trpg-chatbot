@@ -257,6 +257,15 @@ body {
   margin-bottom: 0;
 }
 
+.message-line {
+  display: block;
+  margin-bottom: 0.45rem;
+}
+
+.message-line:last-child {
+  margin-bottom: 0;
+}
+
 .text-dialogue {
   color: #1a3a5c;
   font-weight: 500;
@@ -633,4 +642,166 @@ body {
   color: #6b7a8d;
   background: #c8cdd6;
   border-top: 1px solid #b0b8c4;
+}
+
+@media (max-width: 640px) {
+  html,
+  body {
+    overflow: hidden;
+  }
+
+  .app-shell {
+    min-height: 100dvh;
+  }
+
+  .top-bar {
+    padding: 0.55rem 0.75rem;
+  }
+
+  .org-logo {
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.9rem;
+  }
+
+  .org-name {
+    font-size: 0.85rem;
+  }
+
+  .org-sub,
+  .classified-stamp,
+  .site-footer {
+    display: none;
+  }
+
+  .chat-container {
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+
+  .employee-card {
+    width: 100%;
+    max-height: 5.5rem;
+    padding: 0.55rem 0.7rem;
+    overflow: hidden;
+  }
+
+  .card-info {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .card-photo {
+    flex: 0 0 auto;
+    margin: 0 0.65rem 0 0;
+  }
+
+  .card-label,
+  .card-chapter {
+    text-align: left;
+    margin-bottom: 0.2rem;
+  }
+
+  .card-details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.15rem 0.55rem;
+    font-size: 0.68rem;
+  }
+
+  .card-details div {
+    min-width: 0;
+    padding: 0;
+    border-bottom: 0;
+    gap: 0.35rem;
+  }
+
+  .card-details dd {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .work-panel {
+    border-radius: 0.35rem;
+  }
+
+  .panel-header {
+    padding: 0.7rem 0.85rem;
+  }
+
+  .panel-header h1 {
+    font-size: 0.95rem;
+  }
+
+  .panel-header p {
+    font-size: 0.7rem;
+  }
+
+  .messages {
+    gap: 0.6rem;
+    padding: 0.75rem;
+  }
+
+  .message {
+    max-width: 100%;
+    padding: 0.75rem 0.8rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .message.user {
+    max-width: 92%;
+  }
+
+  .suggested-replies {
+    padding: 0.55rem 0.75rem 0.45rem;
+  }
+
+  .suggested-replies-list {
+    max-height: 7rem;
+  }
+
+  .suggested-reply-btn {
+    min-height: 2.75rem;
+    padding: 0.65rem 0.75rem;
+    font-size: 0.86rem;
+  }
+
+  .chat-form {
+    gap: 0.45rem;
+    padding: 0.65rem 0.75rem calc(0.65rem + env(safe-area-inset-bottom));
+  }
+
+  .chat-form input {
+    min-width: 0;
+    min-height: 3rem;
+    padding: 0.8rem 0.85rem;
+    font-size: 1rem;
+  }
+
+  .chat-form button {
+    flex: 0 0 4.6rem;
+    min-height: 3rem;
+    padding: 0.75rem 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  .intake-form {
+    margin: 0 auto;
+    padding: 0.75rem 0.25rem;
+    max-width: none;
+  }
+
+  .intake-field {
+    margin-bottom: 0.65rem;
+  }
+
+  .intake-field input,
+  .intake-field select,
+  .start-button {
+    min-height: 2.85rem;
+    font-size: 1rem;
+  }
 }
