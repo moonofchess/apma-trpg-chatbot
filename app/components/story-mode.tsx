@@ -175,7 +175,7 @@ export function StoryMode({ onBack }: StoryModeProps) {
   const isSessionClearNode = typeof node.sessionClear === "number";
 
   return (
-    <div className={node.horrorMode ? "app-shell horror-mode" : "app-shell"}>
+    <div className={horrorActive ? "app-shell horror-mode" : "app-shell"}>
       <header className="top-bar">
         <div className="top-bar-left">
           <span className="org-logo">괴</span>
