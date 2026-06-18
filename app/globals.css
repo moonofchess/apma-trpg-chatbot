@@ -208,7 +208,14 @@ body {
   margin-top: 0.25rem;
 }
 
-.new-session-button {
+.panel-actions {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.panel-action-button {
   flex: 0 0 auto;
   padding: 0.5rem 0.75rem;
   border: 1px solid #b0b8c4;
@@ -220,81 +227,143 @@ body {
   cursor: pointer;
 }
 
-.new-session-button:disabled {
+.panel-action-button:disabled {
   opacity: 0.45;
   cursor: not-allowed;
 }
 
-.save-slots {
-  flex-shrink: 0;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.5rem;
-  padding: 0.65rem 1.25rem;
-  background: #fafbfc;
-  border-bottom: 1px solid #e0e6ee;
+.save-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(15, 24, 36, 0.42);
 }
 
-.save-slot {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  min-width: 0;
-  border: 1px solid #c0c8d4;
-  border-radius: 0.35rem;
+.save-dialog {
+  width: min(34rem, 100%);
+  max-height: min(34rem, calc(100dvh - 2rem));
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
+  border: 1px solid #a8b4c2;
+  border-radius: 0.5rem;
   background: #fff;
+  box-shadow: 0 18px 48px rgba(15, 24, 36, 0.28);
 }
 
-.save-slot-load,
-.save-slot-save {
-  border: 0;
-  background: transparent;
-  color: #1a2332;
+.save-dialog-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+  background: #f0f3f7;
+  border-bottom: 1px solid #d0d8e0;
+}
+
+.save-dialog-header h2 {
+  font-size: 1rem;
+  color: #1a3a5c;
+}
+
+.save-dialog-header p {
+  margin-top: 0.25rem;
+  font-size: 0.78rem;
+  color: #6b7a8d;
+}
+
+.save-dialog-close {
+  flex: 0 0 auto;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid #b0b8c4;
+  border-radius: 0.3rem;
+  background: #fff;
+  color: #1a3a5c;
+  font-size: 0.78rem;
+  font-weight: 700;
   cursor: pointer;
 }
 
-.save-slot-load {
-  min-width: 0;
-  padding: 0.45rem 0.55rem;
-  text-align: left;
+.save-dialog-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 1rem 1.1rem;
 }
 
-.save-slot-load span,
-.save-slot-load small {
+.save-dialog-slot {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.85rem;
+  align-items: center;
+  padding: 0.75rem;
+  border: 1px solid #c0c8d4;
+  border-radius: 0.4rem;
+  background: #fafbfc;
+}
+
+.save-dialog-slot-info {
+  min-width: 0;
+}
+
+.save-dialog-slot-info strong,
+.save-dialog-slot-info span,
+.save-dialog-slot-info small {
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.save-slot-load span {
-  font-size: 0.72rem;
-  font-weight: 700;
+.save-dialog-slot-info strong {
+  font-size: 0.78rem;
   color: #1a3a5c;
 }
 
-.save-slot-load small {
+.save-dialog-slot-info span {
+  margin-top: 0.2rem;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #1a2332;
+}
+
+.save-dialog-slot-info small {
   margin-top: 0.15rem;
-  font-size: 0.65rem;
+  font-size: 0.72rem;
   color: #6b7a8d;
 }
 
-.save-slot-save {
-  padding: 0 0.55rem;
-  border-left: 1px solid #e0e6ee;
-  background: #f0f3f7;
-  color: #1a3a5c;
-  font-size: 0.72rem;
-  font-weight: 700;
+.save-dialog-slot-actions {
+  display: flex;
+  gap: 0.4rem;
 }
 
-.save-slot-load:hover:not(:disabled),
-.save-slot-save:hover:not(:disabled) {
+.save-dialog-slot-actions button {
+  min-height: 2.25rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid #b0b8c4;
+  border-radius: 0.3rem;
+  background: #fff;
+  color: #1a3a5c;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.save-dialog-close:hover,
+.save-dialog-slot-actions button:hover:not(:disabled),
+.panel-action-button:hover:not(:disabled) {
   background: #e8f0fa;
 }
 
-.save-slot-load:disabled,
-.save-slot-save:disabled {
+.save-dialog-slot-actions button:disabled {
   opacity: 0.45;
   cursor: not-allowed;
 }
@@ -835,28 +904,32 @@ body {
     font-size: 0.7rem;
   }
 
-  .new-session-button {
+  .panel-actions {
+    gap: 0.35rem;
+  }
+
+  .panel-action-button {
     padding: 0.45rem 0.55rem;
     font-size: 0.72rem;
   }
 
-  .save-slots {
-    display: flex;
-    gap: 0.45rem;
-    padding: 0.5rem 0.75rem;
-    overflow-x: auto;
+  .save-dialog-backdrop {
+    align-items: flex-end;
+    padding: 0.75rem;
   }
 
-  .save-slot {
-    flex: 0 0 12rem;
+  .save-dialog {
+    max-height: calc(100dvh - 1.5rem);
   }
 
-  .save-slot-load {
-    padding: 0.45rem 0.5rem;
+  .save-dialog-slot {
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
   }
 
-  .save-slot-save {
-    min-width: 2.8rem;
+  .save-dialog-slot-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
   }
 
   .messages {

@@ -79,10 +79,25 @@ function formatSavedAt(value: string) {
   }).format(date);
 }
 
+function sameReplies(a: string[], b: string[]) {
+  if (a.length !== b.length) return false;
+  return a.every((reply, index) => reply.trim() === b[index]?.trim());
+}
+
+function getPreviousAssistantReplies(
+  messages: { role: string; parts: { type: string; state?: string; output?: unknown }[] }[],
+) {
+  const assistantMessages = messages.filter((message) => message.role === "assistant");
+  if (assistantMessages.length < 2) return [];
+
+  return extractLatestSuggestedReplies(assistantMessages.slice(0, -1));
+}
+
 export default function ChatPage() {
   const [input, setInput] = useState("");
   const [intake, setIntake] = useState<IntakeData | null>(null);
   const [saveSlots, setSaveSlots] = useState<SaveSlot[]>(Array(MAX_SAVE_SLOTS).fill(null));
+  const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
   const [storageReady, setStorageReady] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { messages, sendMessage, setMessages, status } = useChat({
@@ -117,7 +132,21 @@ export default function ChatPage() {
     const last = messages[messages.length - 1];
     if (!last || last.role !== "assistant") return [];
     const replies = extractLatestSuggestedReplies(messageParts);
-    return replies.length > 0 ? replies : buildFallbackSuggestedReplies(chapter);
+    const previousReplies = getPreviousAssistantReplies(messageParts);
+
+    if (replies.length > 0 && !sameReplies(replies, previousReplies)) {
+      return replies;
+    }
+
+    let seed = messages.length;
+    let fallback = buildFallbackSuggestedReplies(chapter, seed);
+
+    while (sameReplies(fallback, previousReplies) && seed < messages.length + 4) {
+      seed += 1;
+      fallback = buildFallbackSuggestedReplies(chapter, seed);
+    }
+
+    return fallback;
   }, [chapter, messageParts, messages, isLoading]);
 
   useEffect(() => {
@@ -197,6 +226,7 @@ export default function ChatPage() {
     setMessages(slot.messages);
     setIntake(slot.intake);
     setInput("");
+    setIsSaveDialogOpen(false);
   };
 
   const clearCurrentSession = () => {
@@ -240,44 +270,76 @@ export default function ChatPage() {
                   : "2026년 · 내부망 전용"}
               </p>
             </div>
-            <button
-              type="button"
-              className="new-session-button"
-              onClick={clearCurrentSession}
-              disabled={isLoading || !hasSession}
-            >
-              새 기록
-            </button>
+            <div className="panel-actions">
+              <button
+                type="button"
+                className="panel-action-button"
+                onClick={() => setIsSaveDialogOpen(true)}
+              >
+                저장/불러오기
+              </button>
+              <button
+                type="button"
+                className="panel-action-button"
+                onClick={clearCurrentSession}
+                disabled={isLoading || !hasSession}
+              >
+                새 기록
+              </button>
+            </div>
           </header>
 
-          <div className="save-slots" aria-label="저장 슬롯">
-            {Array.from({ length: MAX_SAVE_SLOTS }, (_, index) => {
-              const slot = saveSlots[index];
-              return (
-                <div className="save-slot" key={index}>
+          {isSaveDialogOpen && (
+            <div className="save-dialog-backdrop" role="presentation">
+              <section className="save-dialog" role="dialog" aria-modal="true" aria-labelledby="save-dialog-title">
+                <header className="save-dialog-header">
+                  <div>
+                    <h2 id="save-dialog-title">저장 및 불러오기</h2>
+                    <p>이 브라우저에 최대 3개의 근무일지를 저장합니다.</p>
+                  </div>
                   <button
                     type="button"
-                    className="save-slot-load"
-                    onClick={() => slot && loadSlot(slot)}
-                    disabled={isLoading || !slot}
-                    title={slot ? `${slot.title} 불러오기` : "빈 슬롯"}
+                    className="save-dialog-close"
+                    onClick={() => setIsSaveDialogOpen(false)}
+                    aria-label="닫기"
                   >
-                    <span>슬롯 {index + 1}</span>
-                    <small>{slot ? `${slot.title} · ${formatSavedAt(slot.updatedAt)}` : "비어 있음"}</small>
+                    닫기
                   </button>
-                  <button
-                    type="button"
-                    className="save-slot-save"
-                    onClick={() => saveToSlot(index)}
-                    disabled={isLoading || !hasSession}
-                    title={`슬롯 ${index + 1}에 저장`}
-                  >
-                    저장
-                  </button>
+                </header>
+
+                <div className="save-dialog-list" aria-label="저장 목록">
+                  {Array.from({ length: MAX_SAVE_SLOTS }, (_, index) => {
+                    const slot = saveSlots[index];
+                    return (
+                      <div className="save-dialog-slot" key={index}>
+                        <div className="save-dialog-slot-info">
+                          <strong>슬롯 {index + 1}</strong>
+                          <span>{slot ? slot.title : "비어 있음"}</span>
+                          <small>{slot ? formatSavedAt(slot.updatedAt) : "저장된 근무일지가 없습니다"}</small>
+                        </div>
+                        <div className="save-dialog-slot-actions">
+                          <button
+                            type="button"
+                            onClick={() => slot && loadSlot(slot)}
+                            disabled={isLoading || !slot}
+                          >
+                            불러오기
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => saveToSlot(index)}
+                            disabled={isLoading || !hasSession}
+                          >
+                            저장
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              );
-            })}
-          </div>
+              </section>
+            </div>
+          )}
 
           <div className="messages">
             {messages.length === 0 ? (

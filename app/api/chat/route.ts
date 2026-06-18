@@ -10,7 +10,7 @@ import { TRPG_SYSTEM_PROMPT } from "@/lib/trpg/system-prompt";
 import { trpgTools } from "@/lib/trpg/tools";
 
 export const maxDuration = 60;
-const DEFAULT_MODEL = "gpt-4o";
+const DEFAULT_MODEL = "gpt-5.4-mini";
 
 function jsonError(message: string, status: number) {
   return Response.json({ error: message }, { status });
@@ -33,6 +33,12 @@ export async function POST(req: Request) {
       system: TRPG_SYSTEM_PROMPT,
       messages: await convertToModelMessages(messages),
       tools: trpgTools,
+      providerOptions: {
+        openai: {
+          reasoningEffort: "high",
+          textVerbosity: "high",
+        },
+      },
       stopWhen: stepCountIs(8),
     });
 
