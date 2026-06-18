@@ -13,7 +13,10 @@ import {
 } from "./components/onboarding-form";
 import { SuggestedReplies } from "./components/suggested-replies";
 import { extractGameState } from "@/lib/trpg/employee-profile";
-import { extractLatestSuggestedReplies } from "@/lib/trpg/suggested-replies";
+import {
+  buildFallbackSuggestedReplies,
+  extractLatestSuggestedReplies,
+} from "@/lib/trpg/suggested-replies";
 
 export default function ChatPage() {
   const [input, setInput] = useState("");
@@ -44,8 +47,9 @@ export default function ChatPage() {
     if (isLoading) return [];
     const last = messages[messages.length - 1];
     if (!last || last.role !== "assistant") return [];
-    return extractLatestSuggestedReplies(messageParts);
-  }, [messageParts, messages, isLoading]);
+    const replies = extractLatestSuggestedReplies(messageParts);
+    return replies.length > 0 ? replies : buildFallbackSuggestedReplies(chapter);
+  }, [chapter, messageParts, messages, isLoading]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
