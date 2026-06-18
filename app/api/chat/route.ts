@@ -60,12 +60,6 @@ export async function POST(req: Request) {
       system: `${TRPG_SYSTEM_PROMPT}${extractIntakeNameGuide(messages)}`,
       messages: await convertToModelMessages(messages, { tools: trpgTools }),
       tools: trpgTools,
-      providerOptions: {
-        openai: {
-          reasoningEffort: "high",
-          textVerbosity: "high",
-        },
-      },
       stopWhen: stepCountIs(8),
     });
 
