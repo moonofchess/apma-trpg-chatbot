@@ -1896,6 +1896,13 @@ body {
 .horror-mode .story-choice-text { color: #e0d4d4; }
 .horror-mode .story-choice-badge { color: #88cc99; }
 
+.horror-mode .story-result {
+  background: #111116;
+  border-left-color: #3a1010;
+}
+
+.horror-mode .story-result .story-line { color: #e0d4d4; }
+
 .horror-mode .story-result-death {
   background: #120808;
   border-left-color: #8b0000;
