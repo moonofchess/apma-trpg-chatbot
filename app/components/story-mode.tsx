@@ -58,20 +58,17 @@ export function StoryMode({ onBack }: StoryModeProps) {
   }, []);
 
   useEffect(() => {
-    if (!node) return;
-    applyStats(node.statsOnEnter);
-    if (node.horrorMode === true) setHorrorActive(true);
-    if (node.horrorMode === false) setHorrorActive(false);
-  }, [node?.id]);
-
-  useEffect(() => {
     contentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentNodeId, choiceState]);
 
   const goToNode = useCallback((id: string) => {
+    const next = STORY_NODES.get(id);
     setChoiceState({ phase: "idle" });
     setCurrentNodeId(id);
-  }, []);
+    if (next?.statsOnEnter) applyStats(next.statsOnEnter);
+    if (next?.horrorMode === true) setHorrorActive(true);
+    if (next?.horrorMode === false) setHorrorActive(false);
+  }, [applyStats]);
 
   const handleChoice = (choice: Choice) => {
     applyStats(choice.result.stats);
@@ -81,6 +78,13 @@ export function StoryMode({ onBack }: StoryModeProps) {
   const handleContinue = () => {
     const result = choiceState.phase === "result" ? choiceState.choice.result : null;
     if (!result) return;
+
+    if (result.type === "death") {
+      applyStats({ 침식률: 20 });
+      const session = SESSIONS.find((s) => s.id === (node?.sessionId ?? ""));
+      if (session) goToNode(session.firstNodeId);
+      return;
+    }
 
     if (result.nextId === "RETRY") {
       setChoiceState({ phase: "idle" });
@@ -107,10 +111,9 @@ export function StoryMode({ onBack }: StoryModeProps) {
     const session = SESSIONS.find((s) => s.id === sessionId);
     if (!session) return;
     setStats({ ...DEFAULT_STATS });
-    setChoiceState({ phase: "idle" });
     setHorrorActive(false);
     setShowSessionSelect(false);
-    setCurrentNodeId(session.firstNodeId);
+    goToNode(session.firstNodeId);
   };
 
 
@@ -171,7 +174,6 @@ export function StoryMode({ onBack }: StoryModeProps) {
   if (!node) return null;
 
   const resultPhase = choiceState.phase === "result" ? choiceState : null;
-  const resultType = resultPhase?.choice.result.type;
   const isSessionClearNode = typeof node.sessionClear === "number";
 
   return (
@@ -232,22 +234,16 @@ export function StoryMode({ onBack }: StoryModeProps) {
 
             {/* 선택 결과 표시 */}
             {resultPhase && (
-              <div className={`story-result story-result-${resultType}`}>
-                <p className="story-result-badge">
-                  {resultType === "correct" && "✓ 정답"}
-                  {resultType === "death" && "✕ 사망"}
-                  {resultType === "penalty" && "⚠ 패널티"}
-                  {resultType === "neutral" && "→"}
-                </p>
+              <div className="story-result">
                 {resultPhase.choice.result.lines.map((line, i) => (
                   <p key={i} className="story-line">{line}</p>
                 ))}
                 <button
                   type="button"
-                  className={`story-continue-btn ${resultType === "death" ? "retry" : ""}`}
-                  onClick={resultType === "death" ? () => setChoiceState({ phase: "idle" }) : handleContinue}
+                  className="story-continue-btn"
+                  onClick={handleContinue}
                 >
-                  {resultType === "death" ? "다시 시도" : "계속 →"}
+                  계속 →
                 </button>
               </div>
             )}
@@ -264,9 +260,6 @@ export function StoryMode({ onBack }: StoryModeProps) {
                   >
                     <span className="story-choice-label">{choice.label}</span>
                     <span className="story-choice-text">{choice.text}</span>
-                    {choice.badge && (
-                      <span className="story-choice-badge">{choice.badge}</span>
-                    )}
                   </button>
                 ))}
               </div>
